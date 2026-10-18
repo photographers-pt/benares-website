@@ -1,5 +1,0 @@
-/clips/*
-  Cache-Control: public, max-age=604800
-
-/thumbs/*
-  Cache-Control: public, max-age=604800

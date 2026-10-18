@@ -3,7 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Rita Cutting Room</title>
+<title>Surprise | Club Benares</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -231,6 +236,21 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important}
 .sheet-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
 .sheet-sum{font-family:var(--f-mono);font-size:.82rem;color:var(--muted)}
 
+/* ---------- password lock ---------- */
+.lock{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:24px;background:var(--bg)}
+.lock-card{width:min(360px,100%);display:flex;flex-direction:column;align-items:stretch;gap:10px;text-align:center}
+.lock-logo{display:block;width:72px;height:72px;border-radius:50%;margin:0 auto 6px}
+.lock-title{margin:0;font-family:var(--f-display);font-weight:760;font-stretch:118%;font-size:1.35rem;letter-spacing:.01em;text-transform:uppercase;text-wrap:balance}
+.lock-sub{margin:0 0 8px;color:var(--muted)}
+.lock-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.lock-input{height:42px;padding:0 14px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--fg);font:inherit;font-size:1rem;text-align:center;letter-spacing:.08em}
+.lock-input:focus{border-color:var(--accent)}
+.lock-btn{height:42px}
+.lock-error{margin:4px 0 0;color:var(--danger);font-size:.9rem}
+.lock-card.shake{animation:lockShake .35s}
+@keyframes lockShake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+@media (prefers-reduced-motion: reduce){ .lock-card.shake{animation:none} }
+
 /* ---------- phone / narrow ---------- */
 @media (max-width: 820px){
   html,body{height:auto}
@@ -249,7 +269,19 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important}
 </style>
 </head>
 <body>
-<div class="app">
+<div class="lock" id="lock" hidden>
+  <form class="lock-card" id="lockForm" autocomplete="off">
+    <img class="lock-logo" src="/icon-192.png" width="72" height="72" alt="Club Benares">
+    <h1 class="lock-title">A surprise is waiting</h1>
+    <p class="lock-sub">Enter the password to open it.</p>
+    <label class="lock-label" for="lockInput">Password</label>
+    <input class="lock-input" id="lockInput" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" required>
+    <button class="btn primary lock-btn" id="lockBtn" type="submit">Unlock</button>
+    <p class="lock-error" id="lockError" role="alert" hidden></p>
+  </form>
+</div>
+
+<div class="app" hidden>
   <header class="bar">
     <div class="brand">
       <h1>Rita Cutting Room</h1>
@@ -345,7 +377,8 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important}
 </div>
 
 <script>
-(() => {
+// Started by the lock screen below once the password was accepted (nothing loads before that).
+window.startCuttingRoom = () => {
 "use strict";
 
 const MB_URL = "https://cdn.jsdelivr.net/npm/mediabunny@1.61.1/dist/bundles/mediabunny.min.mjs";
@@ -356,8 +389,8 @@ const ZOOMS = [6, 8, 12, 16, 24, 32, 48, 64, 96];
 const CLIPS = [["C0001",5.76],["C0002",3.84],["C0003",4.32],["C0004",3.84],["C0005",2.88],["C0006",7.2],["C0007",6.72],["C0008",4.8],["C0009",5.76],["C0010",6.24],["C0011",12],["C0012",6.72],["C0013",7.68],["C0014",6.24],["C0015",3.36],["C0016",5.76],["C0017",12.48],["C0018",3.84],["C0019",6.72],["C0020",18.72],["C0021",4.8],["C0022",12],["C0023",6.72],["C0024",31.68],["C0025",13.44],["C0026",13.92],["C0027",16.32],["C0028",16.32],["C0029",16.32],["C0030",22.56],["C0031",9.6],["C0032",13.92],["C0033",38.88],["C0034",27.36],["C0035",18.72],["C0036",20.64],["C0037",0.96],["C0038",8.64],["C0039",28.32],["C0040",37.92],["C0041",4.8],["C0042",8.16]]
   .map(([id, dur]) => ({ id, dur }));
 const byId = Object.fromEntries(CLIPS.map(c => [c.id, c]));
-const clipSrc = id => `clips/${id}.mp4`;
-const thumbSrc = id => `thumbs/${id}.jpg`;
+const clipSrc = id => `/surprise/clips/${id}.mp4`;
+const thumbSrc = id => `/surprise/thumbs/${id}.jpg`;
 
 const EXAMPLE = [
   { id: "C0001", in: 0, out: 4 },
@@ -1292,6 +1325,48 @@ let rzT = 0;
 const refit = () => { if (autoFit && mode !== "trim" && !pending) pps = fitZoom(); renderTimeline(); };
 window.addEventListener("resize", () => { clearTimeout(rzT); rzT = setTimeout(refit, 120); });
 requestAnimationFrame(refit);
+};
+</script>
+<script>
+// Password lock. The password is checked by the Worker (POST /surprise/unlock), which also hands out
+// the cookie that lets the browser load the clips and thumbnails. Nothing about the password lives here.
+(() => {
+  const lock = document.getElementById("lock"), form = document.getElementById("lockForm");
+  const input = document.getElementById("lockInput"), btn = document.getElementById("lockBtn"), err = document.getElementById("lockError");
+  let started = false;
+  function open() {
+    if (started) return;
+    started = true;
+    lock.hidden = true;
+    document.querySelector(".app").hidden = false;
+    window.startCuttingRoom();
+  }
+  function showLock() { lock.hidden = false; input.focus(); }
+
+  // Already unlocked on this browser (cookie from an earlier visit)? Go straight in.
+  fetch("/surprise/unlock", { credentials: "same-origin", cache: "no-store" })
+    .then(r => r.json())
+    .then(d => { if (d && d.ok) open(); else showLock(); })
+    .catch(showLock);
+
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    err.hidden = true; btn.disabled = true;
+    try {
+      const r = await fetch("/surprise/unlock", {
+        method: "POST", credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: input.value })
+      });
+      if (r.ok) { open(); return; }
+      err.textContent = r.status === 401 ? "That's not it. Try again." : "Something went wrong. Try again.";
+    } catch (e2) {
+      err.textContent = "Couldn't reach the server. Check your connection and try again.";
+    }
+    err.hidden = false; btn.disabled = false;
+    input.select();
+    form.classList.remove("shake"); void form.offsetWidth; form.classList.add("shake");
+  });
 })();
 </script>
 </body>

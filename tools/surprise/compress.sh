@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 # Turn camera originals into web clips + thumbnails for the editor.
 #
-#   tools/compress.sh /path/to/CLIP            # writes into public/clips and public/thumbs
-#   tools/compress.sh /path/to/CLIP some/dir   # writes somewhere else
+#   tools/surprise/compress.sh /path/to/CLIP            # writes into public/surprise/clips and public/surprise/thumbs
+#   tools/surprise/compress.sh /path/to/CLIP some/dir   # writes somewhere else
 #
 # Clips that already exist are skipped. At the end it prints the CLIPS list to paste into
-# public/index.html.
+# public/surprise/index.html.
 #
 # Keep these encoder settings identical for every clip. The editor's export joins clips
 # WITHOUT re-encoding, which only works if every file has the same codec settings and a
 # keyframe exactly every second (-g 25 at 25 fps, no scene-cut keyframes).
 set -euo pipefail
 
-SRC="${1:?usage: tools/compress.sh <folder of original .MP4 files> [output dir]}"
-OUT="${2:-$(cd "$(dirname "$0")/.." && pwd)/public}"
+SRC="${1:?usage: tools/surprise/compress.sh <folder of original .MP4 files> [output dir]}"
+OUT="${2:-$(cd "$(dirname "$0")/../.." && pwd)/public/surprise}"
 mkdir -p "$OUT/clips" "$OUT/thumbs"
 
 list=""
@@ -44,5 +44,5 @@ for f in "$SRC"/*.MP4 "$SRC"/*.mp4; do
 done
 
 echo
-echo "Paste this over the CLIPS list in public/index.html:"
+echo "Paste this over the CLIPS list in public/surprise/index.html:"
 echo "const CLIPS = [${list%,}]"

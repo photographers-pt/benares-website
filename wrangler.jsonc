@@ -5,7 +5,10 @@
   "main": "src/worker.js",
   "assets": {
     "directory": "./public",
-    "binding": "ASSETS"
+    "binding": "ASSETS",
+    // These paths go through src/worker.js first so it can check the /surprise password cookie.
+    // Everything else is served straight from ./public.
+    "run_worker_first": ["/surprise/clips/*", "/surprise/thumbs/*", "/surprise/unlock"]
   },
   "vars": {
     "MAILCHIMP_LIST_ID": "b53e4ffa66",
