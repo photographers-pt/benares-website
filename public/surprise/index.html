@@ -105,7 +105,7 @@ a.btn{text-decoration:none;color:inherit}
 .chk input{accent-color:var(--accent);width:15px;height:15px;margin:0}
 
 /* ---------- work area ---------- */
-.work{display:grid;grid-template-columns:minmax(250px,1fr) minmax(0,1.75fr);gap:12px;min-height:0}
+.work{display:grid;grid-template-columns:minmax(220px,1fr) minmax(240px,1.1fr) minmax(0,1.9fr);gap:12px;min-height:0}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r)}
 .panel-head{display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid var(--line);flex-wrap:wrap;min-height:44px}
 .panel-head h2{margin:0;font-family:var(--f-display);font-stretch:100%;font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
@@ -157,9 +157,13 @@ a.btn{text-decoration:none;color:inherit}
 .transport .dim{color:var(--muted);font-size:.9rem}
 .transport .note{color:var(--muted);font-size:.8rem;margin-left:auto}
 
+/* ---------- clip preview (its own player; the big monitor is only for the timeline) ---------- */
+.preview{display:flex;flex-direction:column;min-height:0;min-width:0}
+.preview-screen{position:relative;flex:1;min-height:140px;background:var(--screen);border-radius:0 0 var(--r) var(--r);overflow:hidden}
+.preview-screen video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:var(--screen)}
+
 /* ---------- timeline ---------- */
 .timeline{display:flex;flex-direction:column;min-width:0}
-.example-chip{font-size:.72rem;padding:2px 7px;border-radius:3px;border:1px dashed var(--muted);color:var(--muted)}
 .zoom{display:inline-flex;align-items:center;gap:4px}
 .tl-scroll{overflow-x:auto;overflow-y:hidden;position:relative;scrollbar-color:var(--line) transparent}
 .tl-inner{position:relative;min-width:100%;padding-bottom:12px}
@@ -253,13 +257,25 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important}
 @media (prefers-reduced-motion: reduce){ .lock-card.shake{animation:none} }
 
 /* ---------- phone / narrow ---------- */
+/* medium widths: the preview sits under the clip bin, the timeline monitor keeps the right column */
+@media (max-width: 1000px) and (min-width: 821px){
+  .work{grid-template-columns:minmax(220px,1fr) minmax(0,1.6fr);grid-template-rows:minmax(0,1fr) auto;grid-template-areas:"bin monitor" "preview monitor"}
+  .bin{grid-area:bin}
+  .preview{grid-area:preview}
+  .monitor{grid-area:monitor}
+  .preview-screen{flex:none;aspect-ratio:16/9;min-height:0}
+  .preview.empty .preview-screen{aspect-ratio:auto;height:84px}
+}
 @media (max-width: 820px){
   html,body{height:auto}
   .app{height:auto;grid-template-rows:auto}
   .work{display:contents}
   .monitor{order:1}
   .timeline{order:2}
-  .bin{order:3}
+  .preview{order:3}
+  .bin{order:4}
+  .preview-screen{flex:none;aspect-ratio:16/9;min-height:0}
+  .preview.empty .preview-screen{aspect-ratio:auto;height:84px}
   .screen{flex:none;aspect-ratio:16/9;min-height:0;max-width:100%}
   .bin-grid{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));max-height:70vh}
   .readout{align-items:flex-start}
@@ -306,23 +322,35 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important}
     <section class="panel bin" aria-labelledby="binTitle">
       <div class="panel-head">
         <h2 id="binTitle">Clips</h2>
-        <span class="hint grow" id="binHint">Drag onto the timeline, or press +</span>
+        <span class="hint grow" id="binHint">Click to preview · drag onto the timeline, or press +</span>
+      </div>
+      <div class="bin-grid" id="bin" role="list"></div>
+    </section>
+
+    <section class="panel preview empty" aria-labelledby="prevTitle">
+      <div class="panel-head">
+        <h2 id="prevTitle">Clip preview</h2>
+        <span class="hint grow" id="prevInfo"></span>
         <button class="btn small" id="btnPlayAll">
           <svg id="icoAllPlay" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>
           <svg id="icoAllPause" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" hidden><path d="M4 2.5h3v11H4zM9 2.5h3v11H9z"/></svg>
           <span id="btnPlayAllLabel">Play all</span>
         </button>
       </div>
-      <div class="bin-grid" id="bin" role="list"></div>
+      <div class="preview-screen">
+        <video id="vPrev" playsinline controls preload="auto" hidden></video>
+        <div class="screen-empty" id="prevEmpty">Pick a clip from the bin to watch it here.<br>This player is separate from your timeline.</div>
+        <div class="screen-msg" id="prevMsg" role="status" hidden><span id="prevMsgText"></span></div>
+      </div>
     </section>
 
     <section class="monitor" aria-label="Monitor">
       <div class="screen" id="screen">
         <video id="vA" playsinline preload="auto"></video>
         <video id="vB" playsinline preload="auto"></video>
-        <div class="screen-empty" id="screenEmpty" hidden>Add clips to the timeline to preview your cut.</div>
+        <div class="screen-empty" id="screenEmpty" hidden>Your timeline is empty.<br>Add clips from the bin to start your cut.</div>
         <div class="screen-msg" id="screenMsg" role="status" hidden><span id="screenMsgText"></span></div>
-        <div class="screen-tag" id="screenTag">Timeline</div>
+        <div class="screen-tag" id="screenTag">Timeline playback</div>
       </div>
       <div class="panel transport">
         <button class="btn icon" id="btnPlay" aria-label="Play">
@@ -343,7 +371,6 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important}
     <div class="panel-head">
       <h2 id="tlTitle">Timeline</h2>
       <span class="hint" id="tlCount">0 clips</span>
-      <span class="example-chip" id="exampleChip" hidden>Example cut</span>
       <span class="grow"></span>
       <span class="hint" id="trimHint">Drag a clip's amber edges to trim (snaps to whole seconds)</span>
       <span class="zoom">
@@ -397,17 +424,10 @@ const byId = Object.fromEntries(CLIPS.map(c => [c.id, c]));
 const clipSrc = id => `/surprise/clips/${id}.mp4`;
 const thumbSrc = id => `/surprise/thumbs/${id}.jpg`;
 
-const EXAMPLE = [
-  { id: "C0001", in: 0, out: 4 },
-  { id: "C0013", in: 1, out: 5 },
-  { id: "C0026", in: 3, out: 8 },
-  { id: "C0041", in: 0, out: 4.8 },
-];
-
 const $ = id => document.getElementById(id);
 const el = {
   bin: $("bin"), track: $("track"), ruler: $("ruler"), playhead: $("playhead"), dropMark: $("dropMark"),
-  tlScroll: $("tlScroll"), tlInner: $("tlInner"), tlCount: $("tlCount"), exampleChip: $("exampleChip"),
+  tlScroll: $("tlScroll"), tlInner: $("tlInner"), tlCount: $("tlCount"),
   tcTotal: $("tcTotal"), tcNow: $("tcNow"), tcDur: $("tcDur"), screenTag: $("screenTag"), screenEmpty: $("screenEmpty"),
   screenMsg: $("screenMsg"), screenMsgText: $("screenMsgText"),
   btnPlayAll: $("btnPlayAll"), btnPlayAllLabel: $("btnPlayAllLabel"), icoAllPlay: $("icoAllPlay"), icoAllPause: $("icoAllPause"),
@@ -440,25 +460,21 @@ function nearest(list, v) { let best = list[0]; for (const x of list) if (Math.a
 /* ---------- state ---------- */
 let seq = [];          // [{uid, id, in, out}]
 let selected = null;   // uid
-let isExample = false;
 let pps = 16;          // pixels per second
 let autoFit = true;    // keep the whole cut in view until the viewer zooms by hand
 let tNow = 0;          // playhead, seconds on the timeline
-let mode = "timeline"; // timeline | clip | trim
-let previewId = null;
+let mode = "timeline"; // timeline | trim
 let playing = false, playIdx = -1, playSegs = null;
 let act = 0, loadToken = 0;
 
 function load() {
   let saved = null;
   try { saved = JSON.parse(localStorage.getItem(STORE_KEY) || "null"); } catch (e) {}
-  if (saved && Array.isArray(saved.seq)) {
+  // The timeline starts blank. Only a cut the viewer built themselves is restored (an older version
+  // saved its example cut with example:true; that one is dropped).
+  if (saved) el.optSound.checked = saved.sound !== false;
+  if (saved && Array.isArray(saved.seq) && !saved.example) {
     seq = saved.seq.filter(x => byId[x.id]).map(x => sanitize({ uid: uid(), id: x.id, in: +x.in || 0, out: +x.out || byId[x.id].dur }));
-    isExample = !!saved.example;
-    el.optSound.checked = saved.sound !== false;
-  } else {
-    seq = EXAMPLE.map(x => ({ uid: uid(), ...x }));
-    isExample = true;
   }
 }
 function sanitize(it) {
@@ -469,7 +485,7 @@ function sanitize(it) {
   return it;
 }
 function save() {
-  try { localStorage.setItem(STORE_KEY, JSON.stringify({ seq: seq.map(({ id, in: i, out }) => ({ id, in: i, out })), example: isExample, sound: el.optSound.checked })); } catch (e) {}
+  try { localStorage.setItem(STORE_KEY, JSON.stringify({ seq: seq.map(({ id, in: i, out }) => ({ id, in: i, out })), sound: el.optSound.checked })); } catch (e) {}
 }
 
 function segments() {
@@ -503,7 +519,6 @@ function updateBinBadges() {
   for (const card of el.bin.children) {
     const b = card.querySelector(".card-used"), n = counts[card.dataset.id] || 0;
     b.hidden = !n; b.textContent = n > 1 ? `in cut ×${n}` : "in cut";
-    card.classList.toggle("previewing", mode === "clip" && previewId === card.dataset.id);
   }
 }
 el.bin.addEventListener("click", e => {
@@ -568,7 +583,6 @@ function renderTimeline() {
   });
 
   el.tlCount.textContent = `${seq.length} clip${seq.length === 1 ? "" : "s"}`;
-  el.exampleChip.hidden = !isExample || !seq.length;
   el.tcTotal.textContent = tc(total);
   el.btnExport.disabled = !seq.length;
   updatePlayhead();
@@ -580,28 +594,20 @@ function updatePlayhead() {
   if (mode === "timeline" || mode === "trim") tNow = clamp(tNow, 0, total);
   el.playhead.style.left = (PAD + tNow * pps) + "px";
   el.playhead.hidden = !seq.length;
-  if (mode === "clip") {
-    const v = vids[act];
-    el.tcNow.textContent = tc(v.currentTime || 0);
-    el.tcDur.textContent = tc(byId[previewId]?.dur || 0);
-  } else {
-    el.tcNow.textContent = tc(tNow);
-    el.tcDur.textContent = tc(total);
-  }
+  el.tcNow.textContent = tc(tNow);
+  el.tcDur.textContent = tc(total);
 }
 
 function setTag() {
   const tag = el.screenTag;
   tag.dataset.mode = mode;
-  if (mode === "clip") tag.textContent = playAll ? `All clips · ${previewId} (${qIdx + 1}/${queue.length})` : `Clip ${previewId}`;
-  else if (mode === "trim") tag.textContent = trimTagText;
-  else tag.textContent = "Timeline";
+  if (mode === "trim") tag.textContent = trimTagText;
+  else tag.textContent = "Timeline playback";
   el.screenEmpty.hidden = !(mode === "timeline" && !seq.length);
   if (mode === "timeline" && !seq.length) vids.forEach(v => v.classList.remove("on"));
 }
 
-function commit({ keepExample = false } = {}) {
-  if (!keepExample) isExample = false;
+function commit() {
   if (playing) stop();
   save();
   if (autoFit) pps = fitZoom();
@@ -844,7 +850,6 @@ function showTrimFrame(it, side) {
 let srcPref = "direct";
 const blobUrls = new Map();
 const STALE = new Error("stale");
-let queue = [], qIdx = 0, playAll = false;
 
 async function blobUrlFor(id) {
   if (!blobUrls.has(id)) blobUrls.set(id, URL.createObjectURL(await clipBlob(id)));
@@ -950,7 +955,7 @@ function showTimelineFrame() {
 }
 function seekTo(t) {
   if (playing) stop();
-  mode = "timeline"; playAll = false;
+  mode = "timeline";
   tNow = t;
   updatePlayhead();
   showTimelineFrame();
@@ -961,9 +966,6 @@ function setPlayUI() {
   // SVG elements have no .hidden property, so toggle the attribute itself
   el.icoPlay.toggleAttribute("hidden", playing); el.icoPause.toggleAttribute("hidden", !playing);
   el.btnPlay.setAttribute("aria-label", playing ? "Pause" : "Play");
-  const allOn = playing && mode === "clip" && playAll;
-  el.btnPlayAllLabel.textContent = allOn ? "Pause" : (mode === "clip" && playAll ? "Resume" : "Play all");
-  el.icoAllPlay.toggleAttribute("hidden", allOn); el.icoAllPause.toggleAttribute("hidden", !allOn);
 }
 function stop() {
   playing = false;
@@ -977,16 +979,8 @@ function soundOn() { return el.optSound.checked; }
 // Must stay synchronous up to startOn() so a click on Play counts as the viewer's action.
 function play() {
   hideMsg();
-  if (mode === "clip") {
-    const v = vids[act];
-    if (!v.dataset.clip || v.ended || v.error) { startClip(); return; }
-    const tok = ++loadToken;
-    playing = true; setPlayUI();
-    v.muted = !soundOn();
-    v.play().then(() => { if (tok === loadToken) requestAnimationFrame(tickClip); }).catch(failed);
-    return;
-  }
-  mode = "timeline"; playAll = false;
+  pausePreview();                       // the clip preview and the timeline never play at once
+  mode = "timeline";
   playSegs = segments();
   if (!playSegs.length) return;
   if (tNow >= totalDur() - FRAME / 2) tNow = 0;
@@ -1034,49 +1028,80 @@ function followPlayhead() {
   if (x > sc.scrollLeft + w - 40 || x < sc.scrollLeft) sc.scrollLeft = Math.max(0, x - 60);
 }
 
-// Clip mode: one clip from the bin, or every clip in order (Play all).
-function playClips(startId, all) {
-  stop();
-  hideMsg();
-  mode = "clip"; playAll = all;
-  queue = all ? CLIPS.map(c => c.id) : [startId];
-  qIdx = Math.max(0, queue.indexOf(startId));
-  startClip();
+/* ---------- clip preview ---------- */
+// Clicking a clip in the bin plays it here, in its own player. The big monitor on the right is only
+// for the timeline, so the two can't be mixed up. "Play all" runs through every clip in this player.
+const vPrev = $("vPrev");
+const prevPanel = document.querySelector(".preview");
+const prevInfo = $("prevInfo"), prevEmpty = $("prevEmpty"), prevMsg = $("prevMsg"), prevMsgText = $("prevMsgText");
+const prev = { id: null, all: false, queue: [], idx: 0, token: 0 };
+
+function prevUpdateUI() {
+  const on = prev.id !== null;
+  vPrev.hidden = !on;
+  prevEmpty.hidden = on;
+  prevPanel.classList.toggle("empty", !on);
+  prevInfo.textContent = !on ? ""
+    : prev.all ? `All clips · ${prev.id} (${prev.idx + 1}/${prev.queue.length})`
+    : `${prev.id} · ${tcShort(byId[prev.id].dur)}`;
+  const running = prev.all && !vPrev.paused && !vPrev.ended;
+  el.btnPlayAllLabel.textContent = running ? "Pause" : (prev.all ? "Resume" : "Play all");
+  el.icoAllPlay.toggleAttribute("hidden", running);
+  el.icoAllPause.toggleAttribute("hidden", !running);
+  for (const card of el.bin.children) card.classList.toggle("previewing", card.dataset.id === prev.id);
 }
-function startClip() {
-  const id = queue[qIdx], v = vids[act];
-  if (!id) return;
-  previewId = id;
-  const tok = ++loadToken;
-  playing = true; setPlayUI(); setTag(); updateBinBadges(); revealCard(id);
-  showVideo(act);
-  startOn(v, id, 0, tok).then(() => {
-    if (tok !== loadToken || !playing) return;
-    updatePlayhead();
-    const next = playAll && queue[qIdx + 1];
-    if (next) cue(vids[1 - act], next, 0).catch(() => {});
-    requestAnimationFrame(tickClip);
-  }).catch(failed);
+function prevSay(text) { prevMsgText.textContent = text; prevMsg.hidden = !text; }
+
+// Start a clip in the preview. Its first play() runs before any await, so when this comes from a
+// click the browser treats playback as the viewer's own action.
+function prevPlay(id) {
+  const tok = ++prev.token;
+  if (playing) stop();
+  prev.id = id;
+  prevSay("");
+  vPrev.dataset.kind = srcPref;
+  vPrev.src = srcPref === "blob" && blobUrls.has(id) ? blobUrls.get(id) : clipSrc(id);
+  prevUpdateUI();
+  revealCard(id);
+  if (matchMedia("(max-width: 820px)").matches) prevPanel.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  vPrev.play().catch(err => {
+    if (tok !== prev.token || (err && err.name === "AbortError")) return;
+    if (err && err.name === "NotAllowedError") prevSay("Your browser held playback back. Press play to start.");
+  });
 }
-function nextClip() {
-  if (playAll && qIdx + 1 < queue.length) {
-    vids[act].pause();
-    qIdx++;
-    act = 1 - act;
-    startClip();
-  } else {
-    stop();
-    updatePlayhead();
-  }
+// If the browser refuses the clip's URL, fetch the file and play it from memory instead.
+vPrev.addEventListener("error", async () => {
+  const id = prev.id, tok = prev.token;
+  if (!id || !vPrev.getAttribute("src")) return;
+  if (vPrev.dataset.kind === "direct") {
+    srcPref = "blob";
+    try {
+      const u = await blobUrlFor(id);
+      if (tok !== prev.token) return;
+      vPrev.dataset.kind = "blob"; vPrev.src = u;
+      await vPrev.play();
+    } catch (e) {
+      // our own errors ("Couldn't load C0010 (HTTP 404)…") are readable; the browser's DOMExceptions are not
+      if (tok === prev.token) prevSay(e && !(e instanceof DOMException) && e.message ? e.message : `${id} couldn't be played in this browser.`);
+    }
+  } else prevSay(`${id} couldn't be played in this browser.`);
+});
+function prevPlayAll(startId) {
+  prev.all = true;
+  prev.queue = CLIPS.map(c => c.id);
+  prev.idx = Math.max(0, prev.queue.indexOf(startId));
+  prevPlay(prev.queue[prev.idx]);
 }
-function tickClip() {
-  if (!playing || mode !== "clip") return;
-  updatePlayhead();
-  requestAnimationFrame(tickClip);
-}
-vids.forEach(v => v.addEventListener("ended", () => {
-  if (mode === "clip" && playing && v === vids[act]) nextClip();
-}));
+vPrev.addEventListener("ended", () => {
+  if (prev.all && prev.idx + 1 < prev.queue.length) { prev.idx++; prevPlay(prev.queue[prev.idx]); }
+  else { prev.all = false; prevUpdateUI(); }
+});
+vPrev.addEventListener("play", prevUpdateUI);
+vPrev.addEventListener("pause", prevUpdateUI);
+vPrev.addEventListener("waiting", () => { if (!vPrev.paused) prevSay("Loading…"); });
+vPrev.addEventListener("playing", () => prevSay(""));
+function pausePreview() { if (!vPrev.paused) vPrev.pause(); }
+
 function revealCard(id) {
   const card = el.bin.querySelector(`[data-id="${id}"]`);
   if (!card) return;
@@ -1084,24 +1109,26 @@ function revealCard(id) {
   if (c.top < g.top) el.bin.scrollTop -= g.top - c.top + 10;
   else if (c.bottom > g.bottom) el.bin.scrollTop += c.bottom - g.bottom + 10;
 }
-// A click on a card plays that clip; while Play all is on, the run carries on from there.
-function previewClip(id) { playClips(id, mode === "clip" && playAll); }
+// A click on a card plays that clip; while Play all is running, the run carries on from there.
+function previewClip(id) {
+  if (prev.all) prev.idx = Math.max(0, prev.queue.indexOf(id));
+  prevPlay(id);
+}
 
 el.btnPlay.addEventListener("click", () => { playing ? stop() : play(); });
 el.btnPlayAll.addEventListener("click", () => {
-  if (mode === "clip" && playAll) { playing ? stop() : play(); return; }
-  playClips(CLIPS[0].id, true);
+  if (prev.all && prev.id) { vPrev.paused ? vPrev.play().catch(() => {}) : vPrev.pause(); return; }   // pause / resume
+  prevPlayAll(CLIPS[0].id);
 });
 $("btnStart").addEventListener("click", () => {
-  if (mode === "clip") { stop(); vids[act].currentTime = 0; updatePlayhead(); return; }
   seekTo(0); el.tlScroll.scrollLeft = 0;
 });
 el.optSound.addEventListener("change", () => { vids.forEach(v => v.muted = !soundOn()); save(); });
 
 document.addEventListener("keydown", e => {
-  if (e.target.closest("input, textarea, select") || !el.sheetWrap.hidden) return;
+  if (e.target.closest("input, textarea, select, video") || !el.sheetWrap.hidden) return;
   if (e.key === " " && !e.target.closest("button")) { e.preventDefault(); playing ? stop() : play(); }
-  else if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && mode !== "clip" && !e.target.closest(".item")) {
+  else if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && !e.target.closest(".item")) {
     e.preventDefault();
     seekTo(clamp(tNow + (e.key === "ArrowLeft" ? -1 : 1) * (e.shiftKey ? 1 : FRAME), 0, totalDur()));
   } else if (e.key === "Home") { seekTo(0); }
@@ -1316,11 +1343,12 @@ el.btnSave.addEventListener("click", async () => {
 /* ---------- boot ---------- */
 $("spec").textContent = `${CLIPS.length} clips · 1280×720 · 25 fps`;
 if (matchMedia("(hover: none) and (pointer: coarse)").matches) {
-  $("binHint").textContent = "Tap + to add, or press and hold to drag";
+  $("binHint").textContent = "Tap to preview · tap + to add, or press and hold to drag";
   $("trimHint").textContent = "Tap a clip, then drag its amber edges to trim";
 }
 load();
 renderBin();
+prevUpdateUI();
 pps = fitZoom();
 renderTimeline();
 selected = null;
