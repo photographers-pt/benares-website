@@ -28,12 +28,18 @@ export default {
    /surprise/clips/* and /surprise/thumbs/* to browsers that carry a cookie that
    POST /surprise/unlock hands out after a correct password.
 
-   Password: "lala", any capitalization. Change it by setting a SURPRISE_PASSWORD variable
-   in Cloudflare (or edit the default below). Optionally set a SURPRISE_SECRET secret, a long
-   random string, so the cookie can't be worked out from this file.
+   Password: "lala", any capitalization. Change it by editing the default below, or set a
+   SURPRISE_PASSWORD secret in Cloudflare (use type Secret so it survives deploys). Optionally set a
+   SURPRISE_SECRET secret, a long random string, so the cookie can't be worked out from this file.
+
+   The "download the clips" link (SwissTransfer) is not written in the page: this Worker hands it to
+   the page only after the password was accepted, so it can't be read from the public HTML.
+   Links expire, so when it does, change SURPRISE_DEFAULT_DOWNLOAD_URL below (or set a
+   SURPRISE_DOWNLOAD_URL secret).
    ────────────────────────────────────────────────────────────── */
 
 const SURPRISE_DEFAULT_PASSWORD = 'lala';
+const SURPRISE_DEFAULT_DOWNLOAD_URL = 'https://www.swisstransfer.com/dl/01a14efc-0e4b-714e-bb47-9f3faf77996b';
 const SURPRISE_COOKIE = 'surprise_pass';
 const SURPRISE_COOKIE_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
 
@@ -73,6 +79,8 @@ function readCookie(request, name) {
   return null;
 }
 
+const surpriseDownloadUrl = env => env.SURPRISE_DOWNLOAD_URL || SURPRISE_DEFAULT_DOWNLOAD_URL;
+
 async function isSurpriseUnlocked(request, env) {
   const cookie = readCookie(request, SURPRISE_COOKIE);
   return !!cookie && sameString(cookie, await surpriseToken(env));
@@ -81,7 +89,9 @@ async function isSurpriseUnlocked(request, env) {
 async function handleSurpriseUnlock(request, env, url) {
   // GET: is this browser already unlocked?
   if (request.method === 'GET') {
-    return jsonResponse({ ok: await isSurpriseUnlocked(request, env) });
+    return (await isSurpriseUnlocked(request, env))
+      ? jsonResponse({ ok: true, downloadUrl: surpriseDownloadUrl(env) })
+      : jsonResponse({ ok: false });
   }
   if (request.method !== 'POST') {
     return jsonResponse({ ok: false }, 405, { Allow: 'GET, POST' });
@@ -107,7 +117,7 @@ async function handleSurpriseUnlock(request, env, url) {
     'SameSite=Lax',
     url.protocol === 'https:' ? 'Secure' : '',
   ].filter(Boolean).join('; ');
-  return jsonResponse({ ok: true }, 200, { 'Set-Cookie': cookie });
+  return jsonResponse({ ok: true, downloadUrl: surpriseDownloadUrl(env) }, 200, { 'Set-Cookie': cookie });
 }
 
 async function handleSurpriseAsset(request, env) {

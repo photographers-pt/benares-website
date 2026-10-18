@@ -27,7 +27,15 @@ The camera originals (3.3 GB) are not in this repo. Keep them outside it.
 - The Worker only serves `/surprise/clips/*` and `/surprise/thumbs/*` to browsers that have that cookie. Without it those URLs answer `403`, so the videos can't be fetched by guessing their address.
 - This is a light lock for a surprise, not strong security: the password is short and there is no limit on attempts. For something sensitive use [Cloudflare Access](https://developers.cloudflare.com/cloudflare-one/policies/access/) instead.
 
-**Change the password:** in Cloudflare (Workers & Pages → `benares-worker` → Settings → Variables and Secrets) add a variable `SURPRISE_PASSWORD`. Without it the Worker uses `lala` (`SURPRISE_DEFAULT_PASSWORD` in `src/worker.js`). Optionally add a secret `SURPRISE_SECRET` (a long random string) so the cookie can't be worked out from the code. Anyone already unlocked stays unlocked until their cookie expires, unless you change `SURPRISE_SECRET`.
+**Change the password:** edit `SURPRISE_DEFAULT_PASSWORD` in `src/worker.js`, or in Cloudflare (Workers & Pages → `benares-worker` → Settings → Variables and Secrets) add a **Secret** called `SURPRISE_PASSWORD` (use type Secret, not Text: plain-text variables that aren't in `wrangler.jsonc` can be wiped by the next deploy). Optionally add a secret `SURPRISE_SECRET` (a long random string) so the cookie can't be worked out from the code. Anyone already unlocked stays unlocked until their cookie expires, unless you change `SURPRISE_SECRET`.
+
+## Download link
+
+After unlocking, a **Download clips** button next to *Export MP4* opens a SwissTransfer link with the clips in a new tab.
+
+The link is not written in `index.html`. The Worker sends it to the page only once the password was accepted (`downloadUrl` in the `/surprise/unlock` response), so it can't be read from the public page source. (If this repo is public, the link is of course visible in `src/worker.js` on GitHub.)
+
+SwissTransfer links expire (the free plan keeps them for a limited time), so when the button stops working, upload again and replace `SURPRISE_DEFAULT_DOWNLOAD_URL` in `src/worker.js` (or set a Secret `SURPRISE_DOWNLOAD_URL`).
 
 ## Add or replace clips
 

@@ -94,6 +94,7 @@ button{font:inherit;color:inherit}
 .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent;font-weight:600}
 .btn.primary:hover{filter:brightness(1.08)}
 .btn.icon{width:34px;padding:0}
+a.btn{text-decoration:none;color:inherit}
 .btn.small{height:28px;padding:0 10px;font-size:.82rem}
 .btn.small.icon{width:28px;padding:0}
 .btn.ghost{background:transparent}
@@ -290,6 +291,10 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important}
     <div class="bar-right">
       <div class="readout"><span class="lbl">Cut length</span><span class="tc" id="tcTotal">00:00:00:00</span></div>
       <label class="chk" for="optSound"><input type="checkbox" id="optSound" checked> Camera sound</label>
+      <a class="btn" id="btnDownload" href="#" target="_blank" rel="noopener noreferrer" hidden>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M8 2v8M4.5 6.5 8 10l3.5-3.5M3 13.5h10"/></svg>
+        Download clips
+      </a>
       <button class="btn primary" id="btnExport">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M8 2v8M4.5 6.5 8 10l3.5-3.5M3 13.5h10"/></svg>
         Export MP4
@@ -1334,11 +1339,17 @@ requestAnimationFrame(refit);
   const lock = document.getElementById("lock"), form = document.getElementById("lockForm");
   const input = document.getElementById("lockInput"), btn = document.getElementById("lockBtn"), err = document.getElementById("lockError");
   let started = false;
-  function open() {
+  // The download link comes from the Worker after unlocking; it is not written in this file.
+  function open(downloadUrl) {
     if (started) return;
     started = true;
     lock.hidden = true;
     document.querySelector(".app").hidden = false;
+    if (typeof downloadUrl === "string" && /^https:\/\//.test(downloadUrl)) {
+      const a = document.getElementById("btnDownload");
+      a.href = downloadUrl;
+      a.hidden = false;
+    }
     window.startCuttingRoom();
   }
   function showLock() { lock.hidden = false; input.focus(); }
@@ -1346,7 +1357,7 @@ requestAnimationFrame(refit);
   // Already unlocked on this browser (cookie from an earlier visit)? Go straight in.
   fetch("/surprise/unlock", { credentials: "same-origin", cache: "no-store" })
     .then(r => r.json())
-    .then(d => { if (d && d.ok) open(); else showLock(); })
+    .then(d => { if (d && d.ok) open(d.downloadUrl); else showLock(); })
     .catch(showLock);
 
   form.addEventListener("submit", async e => {
@@ -1358,7 +1369,7 @@ requestAnimationFrame(refit);
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password: input.value })
       });
-      if (r.ok) { open(); return; }
+      if (r.ok) { open((await r.json()).downloadUrl); return; }
       err.textContent = r.status === 401 ? "That's not it. Try again." : "Something went wrong. Try again.";
     } catch (e2) {
       err.textContent = "Couldn't reach the server. Check your connection and try again.";
