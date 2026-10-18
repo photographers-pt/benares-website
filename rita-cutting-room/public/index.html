@@ -1,0 +1,1298 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Rita Cutting Room</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* base reset */
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+
+/* Layout: one-screen cutting room. Clip bin left, monitor right, full-width timeline along the bottom like an edit suite.
+   Dark-first so the footage's colour reads true; light theme mirrors it. */
+:root{
+  --bg:#131416;
+  --panel:#1b1c1f;
+  --raise:#25272b;
+  --line:#33363b;
+  --fg:#ebe8e2;
+  --muted:#9c9ea3;
+  --accent:#f0b545;
+  --accent-ink:#1b1406;
+  --clip:#33506d;
+  --danger:#ec6f63;
+  --screen:#050506;
+  --on-img:#ffffff;
+  --img-shade:rgba(0,0,0,.66);
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"Cascadia Mono",Consolas,monospace;
+  --r:6px;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#e7e5e1; --panel:#f7f6f3; --raise:#e5e2dd; --line:#ccc8c1; --fg:#1c1d1f; --muted:#5d5f64;
+    --accent:#995c00; --accent-ink:#ffffff; --clip:#a3bcd6; --danger:#b5372b; --screen:#0b0b0c;
+    color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#e7e5e1; --panel:#f7f6f3; --raise:#e5e2dd; --line:#ccc8c1; --fg:#1c1d1f; --muted:#5d5f64;
+  --accent:#995c00; --accent-ink:#ffffff; --clip:#a3bcd6; --danger:#b5372b; --screen:#0b0b0c;
+  color-scheme:light;
+}
+
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-ui);font-size:14px;line-height:1.4}
+*,*::before,*::after{box-sizing:border-box}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.app{
+  height:100%;
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr) auto;
+  gap:12px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+  padding-block:12px;
+}
+
+/* ---------- header ---------- */
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px 20px;flex-wrap:wrap}
+.brand{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;min-width:0}
+.brand h1{
+  margin:0;font-family:var(--f-display);font-weight:760;font-stretch:118%;
+  font-size:1.35rem;letter-spacing:.01em;text-transform:uppercase;text-wrap:balance;
+}
+.spec{font-family:var(--f-mono);font-size:.75rem;color:var(--muted);letter-spacing:.04em}
+.bar-right{display:flex;align-items:center;gap:10px 16px;flex-wrap:wrap}
+.readout{display:flex;flex-direction:column;align-items:flex-end;line-height:1.15}
+.lbl{font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.tc{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:500;letter-spacing:.02em}
+.readout .tc{font-size:1.05rem}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  height:34px;padding:0 14px;border-radius:5px;border:1px solid var(--line);
+  background:var(--raise);cursor:pointer;font-weight:500;white-space:nowrap;
+}
+.btn:hover{border-color:var(--muted)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent;font-weight:600}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.icon{width:34px;padding:0}
+.btn.small{height:28px;padding:0 10px;font-size:.82rem}
+.btn.small.icon{width:28px;padding:0}
+.btn.ghost{background:transparent}
+.btn.warn{color:var(--danger)}
+.btn svg{width:16px;height:16px;flex:none}
+
+.chk{display:inline-flex;align-items:center;gap:7px;cursor:pointer;user-select:none;color:var(--muted)}
+.chk input{accent-color:var(--accent);width:15px;height:15px;margin:0}
+
+/* ---------- work area ---------- */
+.work{display:grid;grid-template-columns:minmax(250px,1fr) minmax(0,1.75fr);gap:12px;min-height:0}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r)}
+.panel-head{display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid var(--line);flex-wrap:wrap;min-height:44px}
+.panel-head h2{margin:0;font-family:var(--f-display);font-stretch:100%;font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.hint{color:var(--muted);font-size:.8rem}
+.grow{flex:1}
+
+.bin{display:flex;flex-direction:column;min-height:0}
+.bin-grid{
+  overflow:auto;min-height:0;flex:1;padding:10px;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:10px;align-content:start;
+}
+.card{
+  position:relative;border-radius:5px;background:var(--raise);border:1px solid transparent;
+  cursor:grab;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
+}
+.card:hover{border-color:var(--line)}
+.card.previewing{border-color:var(--accent)}
+.card img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:4px 4px 0 0;background:var(--screen);pointer-events:none}
+.card-meta{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:5px 7px 6px}
+.card-name{font-family:var(--f-mono);font-size:.8rem;font-weight:500}
+.card-dur{font-family:var(--f-mono);font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.card-add{
+  position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;
+  border:none;background:var(--img-shade);color:var(--on-img);cursor:pointer;
+  display:grid;place-items:center;
+}
+.card-add:hover{background:var(--accent);color:var(--accent-ink)}
+.card-add svg{width:14px;height:14px}
+.card-used{
+  position:absolute;top:6px;left:6px;padding:1px 6px;border-radius:3px;
+  background:var(--accent);color:var(--accent-ink);font-family:var(--f-mono);font-size:.68rem;font-weight:500;
+}
+
+.monitor{display:flex;flex-direction:column;gap:8px;min-height:0;min-width:0}
+.screen{position:relative;flex:1;min-height:180px;background:var(--screen);border-radius:var(--r);overflow:hidden}
+.screen video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0}
+.screen video.on{opacity:1}
+.screen-tag{
+  position:absolute;top:10px;left:10px;padding:3px 8px;border-radius:3px;
+  background:var(--img-shade);color:var(--on-img);font-family:var(--f-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;
+}
+.screen-tag[data-mode="trim"]{background:var(--accent);color:var(--accent-ink)}
+.screen-empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:24px;color:var(--on-img);opacity:.7;font-size:.9rem}
+.screen-msg{position:absolute;inset:0;display:grid;place-items:center;padding:24px;pointer-events:none}
+.screen-msg span{max-width:34ch;text-align:center;padding:8px 12px;border-radius:4px;background:var(--img-shade);color:var(--on-img);font-size:.88rem}
+.screen-msg[data-kind="error"] span{box-shadow:inset 3px 0 0 var(--danger)}
+.transport{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;padding:8px 10px}
+.transport .tc{font-size:1.15rem}
+.transport .dim{color:var(--muted);font-size:.9rem}
+.transport .note{color:var(--muted);font-size:.8rem;margin-left:auto}
+
+/* ---------- timeline ---------- */
+.timeline{display:flex;flex-direction:column;min-width:0}
+.example-chip{font-size:.72rem;padding:2px 7px;border-radius:3px;border:1px dashed var(--muted);color:var(--muted)}
+.zoom{display:inline-flex;align-items:center;gap:4px}
+.tl-scroll{overflow-x:auto;overflow-y:hidden;position:relative;scrollbar-color:var(--line) transparent}
+.tl-inner{position:relative;min-width:100%;padding-bottom:12px}
+.ruler{
+  position:relative;height:26px;cursor:pointer;touch-action:none;
+  background-image:linear-gradient(to right, var(--line) 1px, transparent 1px);
+  background-repeat:repeat-x;background-position:12px 100%;
+  border-bottom:1px solid var(--line);
+}
+.ruler-lbl{position:absolute;bottom:9px;transform:translateX(-50%);font-family:var(--f-mono);font-size:.68rem;color:var(--muted);pointer-events:none;white-space:nowrap}
+.ruler-major{position:absolute;bottom:0;width:1px;height:12px;background:var(--muted);pointer-events:none}
+.track{position:relative;display:flex;height:66px;margin-top:8px;padding-left:12px}
+.track-empty{
+  flex:1;margin-right:12px;border:1px dashed var(--line);border-radius:5px;
+  display:grid;place-items:center;color:var(--muted);font-size:.86rem;text-align:center;padding:0 12px;
+}
+.item{
+  position:relative;flex:none;height:100%;border-radius:4px;overflow:hidden;
+  background-color:var(--clip);background-repeat:repeat-x;background-size:auto 100%;background-position:left center;
+  box-shadow:inset 0 0 0 1px var(--bg);
+  cursor:grab;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
+}
+.item::after{content:"";position:absolute;inset:0;background:linear-gradient(to top, var(--img-shade), transparent 70%);pointer-events:none}
+.item.sel{box-shadow:inset 0 0 0 2px var(--accent);z-index:1}
+.item.lifting{opacity:.35}
+.item-label{
+  position:absolute;left:7px;right:7px;bottom:5px;z-index:1;display:flex;gap:6px;align-items:baseline;
+  color:var(--on-img);font-family:var(--f-mono);font-size:.72rem;white-space:nowrap;overflow:hidden;pointer-events:none;
+}
+.item-label b{font-weight:500}
+.item-label span{opacity:.8}
+.h{
+  position:absolute;top:0;bottom:0;width:11px;z-index:2;cursor:ew-resize;touch-action:none;display:none;
+  background:var(--accent);
+}
+.h::before{content:"";position:absolute;top:50%;left:50%;width:2px;height:18px;margin:-9px 0 0 -1px;background:var(--accent-ink);opacity:.6;border-radius:1px}
+.h-in{left:0;border-radius:4px 0 0 4px}
+.h-out{right:0;border-radius:0 4px 4px 0}
+.item.sel .h{display:block}
+@media (hover:hover){ .item:hover .h{display:block;opacity:.85} .item.sel .h{opacity:1} }
+.item-x{
+  position:absolute;top:4px;right:15px;z-index:3;width:22px;height:22px;border-radius:50%;border:none;
+  background:var(--img-shade);color:var(--on-img);cursor:pointer;display:none;place-items:center;padding:0;
+}
+.item-x svg{width:12px;height:12px}
+.item.sel .item-x{display:grid}
+.item.narrow .item-label span{display:none}
+.item.narrow .item-x{right:50%;margin-right:-11px}
+
+.playhead{position:absolute;top:0;bottom:12px;width:2px;margin-left:-1px;background:var(--accent);pointer-events:none;z-index:4}
+.playhead::before{content:"";position:absolute;top:0;left:-5px;border:6px solid transparent;border-top:8px solid var(--accent);border-bottom:0}
+.drop-mark{position:absolute;top:30px;height:70px;width:3px;margin-left:-1.5px;background:var(--accent);border-radius:2px;z-index:5;pointer-events:none;display:none;box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent)}
+
+.drag-ghost{
+  position:fixed;left:0;top:0;z-index:50;pointer-events:none;width:120px;border-radius:5px;overflow:hidden;
+  box-shadow:0 10px 30px rgba(0,0,0,.45);border:2px solid var(--accent);background:var(--screen);
+}
+.drag-ghost img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
+.drag-ghost span{position:absolute;left:6px;bottom:4px;color:var(--on-img);font-family:var(--f-mono);font-size:.72rem;text-shadow:0 1px 2px rgba(0,0,0,.8)}
+body.is-dragging,body.is-dragging *{cursor:grabbing!important}
+
+/* ---------- export sheet ---------- */
+.sheet-wrap{
+  position:fixed;inset:0;z-index:60;display:grid;place-items:center;
+  background:color-mix(in srgb, var(--bg) 70%, transparent);backdrop-filter:blur(3px);
+  padding:max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+}
+.sheet{width:min(560px,100%);max-height:100%;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.sheet h3{margin:0;font-family:var(--f-display);font-stretch:110%;font-size:1rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.progress{height:8px;border-radius:4px;background:var(--raise);overflow:hidden}
+.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .15s linear}
+.sheet-status{color:var(--muted);font-size:.86rem;min-height:1.2em}
+.sheet-status.err{color:var(--danger)}
+.sheet video{width:100%;aspect-ratio:16/9;background:var(--screen);border-radius:5px}
+.sheet-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.sheet-sum{font-family:var(--f-mono);font-size:.82rem;color:var(--muted)}
+
+/* ---------- phone / narrow ---------- */
+@media (max-width: 820px){
+  html,body{height:auto}
+  .app{height:auto;grid-template-rows:auto}
+  .work{display:contents}
+  .monitor{order:1}
+  .timeline{order:2}
+  .bin{order:3}
+  .screen{flex:none;aspect-ratio:16/9;min-height:0;max-width:100%}
+  .bin-grid{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));max-height:70vh}
+  .readout{align-items:flex-start}
+  .transport .tc{font-size:1rem}
+}
+@media (hover:none) and (pointer:coarse){ .transport .note{display:none} }
+@media (prefers-reduced-motion: reduce){ *{transition:none!important} }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="bar">
+    <div class="brand">
+      <h1>Rita Cutting Room</h1>
+      <span class="spec" id="spec">42 clips · 1280×720 · 25 fps</span>
+    </div>
+    <div class="bar-right">
+      <div class="readout"><span class="lbl">Cut length</span><span class="tc" id="tcTotal">00:00:00:00</span></div>
+      <label class="chk" for="optSound"><input type="checkbox" id="optSound" checked> Camera sound</label>
+      <button class="btn primary" id="btnExport">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M8 2v8M4.5 6.5 8 10l3.5-3.5M3 13.5h10"/></svg>
+        Export MP4
+      </button>
+    </div>
+  </header>
+
+  <main class="work">
+    <section class="panel bin" aria-labelledby="binTitle">
+      <div class="panel-head">
+        <h2 id="binTitle">Clips</h2>
+        <span class="hint grow" id="binHint">Drag onto the timeline, or press +</span>
+        <button class="btn small" id="btnPlayAll">
+          <svg id="icoAllPlay" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>
+          <svg id="icoAllPause" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" hidden><path d="M4 2.5h3v11H4zM9 2.5h3v11H9z"/></svg>
+          <span id="btnPlayAllLabel">Play all</span>
+        </button>
+      </div>
+      <div class="bin-grid" id="bin" role="list"></div>
+    </section>
+
+    <section class="monitor" aria-label="Monitor">
+      <div class="screen" id="screen">
+        <video id="vA" playsinline preload="auto"></video>
+        <video id="vB" playsinline preload="auto"></video>
+        <div class="screen-empty" id="screenEmpty" hidden>Add clips to the timeline to preview your cut.</div>
+        <div class="screen-msg" id="screenMsg" role="status" hidden><span id="screenMsgText"></span></div>
+        <div class="screen-tag" id="screenTag">Timeline</div>
+      </div>
+      <div class="panel transport">
+        <button class="btn icon" id="btnPlay" aria-label="Play">
+          <svg id="icoPlay" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>
+          <svg id="icoPause" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" hidden><path d="M4 2.5h3v11H4zM9 2.5h3v11H9z"/></svg>
+        </button>
+        <button class="btn icon ghost" id="btnStart" aria-label="Go to start">
+          <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M3 2.5h2v11H3zM13 2.5v11L6 8z"/></svg>
+        </button>
+        <span class="tc" id="tcNow">00:00:00:00</span>
+        <span class="tc dim">/ <span id="tcDur">00:00:00:00</span></span>
+        <span class="note" id="transportNote">Space plays · Delete removes the selected clip</span>
+      </div>
+    </section>
+  </main>
+
+  <section class="panel timeline" aria-labelledby="tlTitle">
+    <div class="panel-head">
+      <h2 id="tlTitle">Timeline</h2>
+      <span class="hint" id="tlCount">0 clips</span>
+      <span class="example-chip" id="exampleChip" hidden>Example cut</span>
+      <span class="grow"></span>
+      <span class="hint" id="trimHint">Drag a clip's amber edges to trim (snaps to whole seconds)</span>
+      <span class="zoom">
+        <button class="btn small icon ghost" id="zoomOut" aria-label="Zoom out"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3.5 8h9"/></svg></button>
+        <button class="btn small ghost" id="zoomFit">Fit</button>
+        <button class="btn small icon ghost" id="zoomIn" aria-label="Zoom in"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3.5 8h9M8 3.5v9"/></svg></button>
+      </span>
+      <button class="btn small ghost warn" id="btnClear">Clear</button>
+    </div>
+    <div class="tl-scroll" id="tlScroll">
+      <div class="tl-inner" id="tlInner">
+        <div class="ruler" id="ruler"></div>
+        <div class="track" id="track"></div>
+        <div class="playhead" id="playhead"></div>
+        <div class="drop-mark" id="dropMark"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="sheet-wrap" id="sheetWrap" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <h3 id="sheetTitle">Exporting</h3>
+    <div class="progress" id="progressBox"><i id="progressBar"></i></div>
+    <div class="sheet-status" id="sheetStatus"></div>
+    <video id="resultVideo" controls playsinline hidden></video>
+    <div class="sheet-sum" id="sheetSum" hidden></div>
+    <div class="sheet-actions">
+      <button class="btn" id="btnSheetClose">Cancel</button>
+      <button class="btn primary" id="btnSave" hidden>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M8 2v8M4.5 6.5 8 10l3.5-3.5M3 13.5h10"/></svg>
+        <span id="btnSaveLabel">Save MP4</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+"use strict";
+
+const MB_URL = "https://cdn.jsdelivr.net/npm/mediabunny@1.61.1/dist/bundles/mediabunny.min.mjs";
+const FPS = 25, FRAME = 1 / FPS, EPS = 0.02, PAD = 12;
+const STORE_KEY = "rita-cutting-room:v1";
+const ZOOMS = [6, 8, 12, 16, 24, 32, 48, 64, 96];
+
+const CLIPS = [["C0001",5.76],["C0002",3.84],["C0003",4.32],["C0004",3.84],["C0005",2.88],["C0006",7.2],["C0007",6.72],["C0008",4.8],["C0009",5.76],["C0010",6.24],["C0011",12],["C0012",6.72],["C0013",7.68],["C0014",6.24],["C0015",3.36],["C0016",5.76],["C0017",12.48],["C0018",3.84],["C0019",6.72],["C0020",18.72],["C0021",4.8],["C0022",12],["C0023",6.72],["C0024",31.68],["C0025",13.44],["C0026",13.92],["C0027",16.32],["C0028",16.32],["C0029",16.32],["C0030",22.56],["C0031",9.6],["C0032",13.92],["C0033",38.88],["C0034",27.36],["C0035",18.72],["C0036",20.64],["C0037",0.96],["C0038",8.64],["C0039",28.32],["C0040",37.92],["C0041",4.8],["C0042",8.16]]
+  .map(([id, dur]) => ({ id, dur }));
+const byId = Object.fromEntries(CLIPS.map(c => [c.id, c]));
+const clipSrc = id => `clips/${id}.mp4`;
+const thumbSrc = id => `thumbs/${id}.jpg`;
+
+const EXAMPLE = [
+  { id: "C0001", in: 0, out: 4 },
+  { id: "C0013", in: 1, out: 5 },
+  { id: "C0026", in: 3, out: 8 },
+  { id: "C0041", in: 0, out: 4.8 },
+];
+
+const $ = id => document.getElementById(id);
+const el = {
+  bin: $("bin"), track: $("track"), ruler: $("ruler"), playhead: $("playhead"), dropMark: $("dropMark"),
+  tlScroll: $("tlScroll"), tlInner: $("tlInner"), tlCount: $("tlCount"), exampleChip: $("exampleChip"),
+  tcTotal: $("tcTotal"), tcNow: $("tcNow"), tcDur: $("tcDur"), screenTag: $("screenTag"), screenEmpty: $("screenEmpty"),
+  screenMsg: $("screenMsg"), screenMsgText: $("screenMsgText"),
+  btnPlayAll: $("btnPlayAll"), btnPlayAllLabel: $("btnPlayAllLabel"), icoAllPlay: $("icoAllPlay"), icoAllPause: $("icoAllPause"),
+  btnPlay: $("btnPlay"), icoPlay: $("icoPlay"), icoPause: $("icoPause"), optSound: $("optSound"),
+  sheetWrap: $("sheetWrap"), sheetTitle: $("sheetTitle"), progressBox: $("progressBox"), progressBar: $("progressBar"),
+  sheetStatus: $("sheetStatus"), resultVideo: $("resultVideo"), sheetSum: $("sheetSum"),
+  btnSheetClose: $("btnSheetClose"), btnSave: $("btnSave"), btnSaveLabel: $("btnSaveLabel"), btnExport: $("btnExport"),
+};
+const vids = [$("vA"), $("vB")];
+
+/* ---------- helpers ---------- */
+function tc(t) {
+  const f = Math.max(0, Math.round(t * FPS));
+  const ff = f % FPS, s = Math.floor(f / FPS), ss = s % 60, m = Math.floor(s / 60), mm = m % 60, hh = Math.floor(m / 60);
+  const p = n => String(n).padStart(2, "0");
+  return `${p(hh)}:${p(mm)}:${p(ss)}:${p(ff)}`;
+}
+const tcShort = t => tc(t).slice(3);               // MM:SS:FF
+function rulerLabel(s) { const m = Math.floor(s / 60); return `${m}:${String(s % 60).padStart(2, "0")}`; }
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const fmtMB = b => (b / 1048576).toFixed(b < 10485760 ? 1 : 0) + " MB";
+let uidN = 0;
+const uid = () => "i" + (++uidN) + Math.random().toString(36).slice(2, 6);
+
+// Cuts land on keyframes (one every second), so the export can copy video without re-encoding.
+function inPoints(c, out) { const p = []; for (let s = 0; s < out - EPS; s++) p.push(s); return p; }
+function outPoints(c, inn) { const p = []; for (let s = Math.floor(inn) + 1; s < c.dur - EPS; s++) p.push(s); p.push(c.dur); return p; }
+function nearest(list, v) { let best = list[0]; for (const x of list) if (Math.abs(x - v) < Math.abs(best - v)) best = x; return best; }
+
+/* ---------- state ---------- */
+let seq = [];          // [{uid, id, in, out}]
+let selected = null;   // uid
+let isExample = false;
+let pps = 16;          // pixels per second
+let autoFit = true;    // keep the whole cut in view until the viewer zooms by hand
+let tNow = 0;          // playhead, seconds on the timeline
+let mode = "timeline"; // timeline | clip | trim
+let previewId = null;
+let playing = false, playIdx = -1, playSegs = null;
+let act = 0, loadToken = 0;
+
+function load() {
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(STORE_KEY) || "null"); } catch (e) {}
+  if (saved && Array.isArray(saved.seq)) {
+    seq = saved.seq.filter(x => byId[x.id]).map(x => sanitize({ uid: uid(), id: x.id, in: +x.in || 0, out: +x.out || byId[x.id].dur }));
+    isExample = !!saved.example;
+    el.optSound.checked = saved.sound !== false;
+  } else {
+    seq = EXAMPLE.map(x => ({ uid: uid(), ...x }));
+    isExample = true;
+  }
+}
+function sanitize(it) {
+  const c = byId[it.id];
+  it.out = it.out >= c.dur - EPS ? c.dur : clamp(Math.round(it.out), 1, Math.floor(c.dur - EPS));
+  it.in = clamp(Math.round(it.in), 0, Math.ceil(it.out - EPS) - 1);
+  if (it.out <= it.in) { it.in = 0; it.out = c.dur; }
+  return it;
+}
+function save() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify({ seq: seq.map(({ id, in: i, out }) => ({ id, in: i, out })), example: isExample, sound: el.optSound.checked })); } catch (e) {}
+}
+
+function segments() {
+  let t = 0;
+  return seq.map(it => { const s = { it, start: t, dur: it.out - it.in }; t += s.dur; return s; });
+}
+const totalDur = () => seq.reduce((a, it) => a + (it.out - it.in), 0);
+function segIndexAt(segs, t) {
+  for (let i = 0; i < segs.length; i++) if (t < segs[i].start + segs[i].dur - 1e-6) return i;
+  return segs.length - 1;
+}
+
+/* ---------- bin ---------- */
+function renderBin() {
+  const frag = document.createDocumentFragment();
+  for (const c of CLIPS) {
+    const card = document.createElement("div");
+    card.className = "card"; card.setAttribute("role", "listitem"); card.dataset.id = c.id;
+    card.innerHTML =
+      `<img src="${thumbSrc(c.id)}" alt="" width="320" height="180" loading="lazy" draggable="false">` +
+      `<div class="card-meta"><span class="card-name">${c.id}</span><span class="card-dur">${tcShort(c.dur)}</span></div>` +
+      `<button class="card-add" aria-label="Add ${c.id} to the timeline"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg></button>` +
+      `<span class="card-used" hidden></span>`;
+    frag.appendChild(card);
+  }
+  el.bin.appendChild(frag);
+}
+function updateBinBadges() {
+  const counts = {};
+  for (const it of seq) counts[it.id] = (counts[it.id] || 0) + 1;
+  for (const card of el.bin.children) {
+    const b = card.querySelector(".card-used"), n = counts[card.dataset.id] || 0;
+    b.hidden = !n; b.textContent = n > 1 ? `in cut ×${n}` : "in cut";
+    card.classList.toggle("previewing", mode === "clip" && previewId === card.dataset.id);
+  }
+}
+el.bin.addEventListener("click", e => {
+  const add = e.target.closest(".card-add");
+  if (!add) return;
+  const id = add.closest(".card").dataset.id;
+  insertClip(id, seq.length);
+});
+el.bin.addEventListener("pointerdown", e => {
+  const card = e.target.closest(".card");
+  if (!card || e.target.closest("button")) return;
+  armDrag(e, { kind: "new", id: card.dataset.id }, () => previewClip(card.dataset.id));
+});
+el.bin.addEventListener("contextmenu", e => { if (e.target.closest(".card")) e.preventDefault(); });
+
+/* ---------- timeline ---------- */
+const itemEls = new Map();
+function renderTimeline() {
+  const total = totalDur();
+  const viewW = el.tlScroll.clientWidth;
+  const contentW = PAD + total * pps + 120;
+  el.tlInner.style.width = Math.max(viewW, contentW) + "px";
+
+  // ruler
+  el.ruler.style.backgroundSize = `${pps}px 6px`;
+  const step = [1, 2, 5, 10, 15, 30, 60, 120].find(s => s * pps >= 56) || 120;
+  const maxS = Math.ceil((Math.max(viewW, contentW) - PAD) / pps);
+  let html = "";
+  for (let s = 0; s <= maxS; s += step) {
+    const x = PAD + s * pps;
+    html += `<span class="ruler-major" style="left:${x}px"></span><span class="ruler-lbl" style="left:${x}px">${rulerLabel(s)}</span>`;
+  }
+  el.ruler.innerHTML = html;
+
+  // items (keyed so trim handles keep working while they resize)
+  const live = new Set(seq.map(it => it.uid));
+  for (const [k, node] of itemEls) if (!live.has(k)) { node.remove(); itemEls.delete(k); }
+  let empty = el.track.querySelector(".track-empty");
+  if (!seq.length) {
+    if (!empty) { empty = document.createElement("div"); empty.className = "track-empty"; empty.textContent = "Drag clips here to start your cut"; el.track.appendChild(empty); }
+  } else if (empty) empty.remove();
+
+  seq.forEach((it, i) => {
+    let node = itemEls.get(it.uid);
+    if (!node) {
+      node = document.createElement("div");
+      node.className = "item"; node.tabIndex = 0; node.dataset.uid = it.uid;
+      node.style.backgroundImage = `url("${thumbSrc(it.id)}")`;
+      node.innerHTML =
+        `<div class="item-label"><b>${it.id}</b><span></span></div>` +
+        `<div class="h h-in" data-side="in" title="Trim start"></div><div class="h h-out" data-side="out" title="Trim end"></div>` +
+        `<button class="item-x" aria-label="Remove ${it.id} from the timeline"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>`;
+      itemEls.set(it.uid, node);
+    }
+    const w = (it.out - it.in) * pps;
+    node.style.width = w + "px";
+    node.querySelector(".item-label span").textContent = tcShort(it.out - it.in);
+    node.classList.toggle("sel", it.uid === selected);
+    node.classList.toggle("narrow", w < 64);
+    node.setAttribute("aria-label", `${it.id}, ${(it.out - it.in).toFixed(2)} seconds, starting ${it.in} seconds into the clip`);
+    if (el.track.children[i] !== node) el.track.insertBefore(node, el.track.children[i] || null);
+  });
+
+  el.tlCount.textContent = `${seq.length} clip${seq.length === 1 ? "" : "s"}`;
+  el.exampleChip.hidden = !isExample || !seq.length;
+  el.tcTotal.textContent = tc(total);
+  el.btnExport.disabled = !seq.length;
+  updatePlayhead();
+  updateBinBadges();
+}
+
+function updatePlayhead() {
+  const total = totalDur();
+  if (mode === "timeline" || mode === "trim") tNow = clamp(tNow, 0, total);
+  el.playhead.style.left = (PAD + tNow * pps) + "px";
+  el.playhead.hidden = !seq.length;
+  if (mode === "clip") {
+    const v = vids[act];
+    el.tcNow.textContent = tc(v.currentTime || 0);
+    el.tcDur.textContent = tc(byId[previewId]?.dur || 0);
+  } else {
+    el.tcNow.textContent = tc(tNow);
+    el.tcDur.textContent = tc(total);
+  }
+}
+
+function setTag() {
+  const tag = el.screenTag;
+  tag.dataset.mode = mode;
+  if (mode === "clip") tag.textContent = playAll ? `All clips · ${previewId} (${qIdx + 1}/${queue.length})` : `Clip ${previewId}`;
+  else if (mode === "trim") tag.textContent = trimTagText;
+  else tag.textContent = "Timeline";
+  el.screenEmpty.hidden = !(mode === "timeline" && !seq.length);
+  if (mode === "timeline" && !seq.length) vids.forEach(v => v.classList.remove("on"));
+}
+
+function commit({ keepExample = false } = {}) {
+  if (!keepExample) isExample = false;
+  if (playing) stop();
+  save();
+  if (autoFit) pps = fitZoom();
+  renderTimeline();
+  if (mode === "timeline") showTimelineFrame();
+  setTag();
+}
+
+function insertClip(id, index) {
+  const c = byId[id];
+  const it = { uid: uid(), id, in: 0, out: c.dur };
+  seq.splice(index, 0, it);
+  selected = it.uid;
+  if (mode !== "timeline") mode = "timeline";
+  // move the playhead to the start of the new clip so the monitor shows it
+  tNow = segments()[index].start;
+  commit();
+  requestAnimationFrame(() => {
+    const node = itemEls.get(it.uid);
+    if (node) node.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" });
+  });
+}
+function removeItem(u) {
+  const i = seq.findIndex(it => it.uid === u);
+  if (i < 0) return;
+  seq.splice(i, 1);
+  selected = seq[i]?.uid || seq[i - 1]?.uid || null;
+  commit();
+}
+
+el.track.addEventListener("click", e => {
+  const x = e.target.closest(".item-x");
+  if (x) { e.stopPropagation(); removeItem(x.closest(".item").dataset.uid); }
+});
+el.track.addEventListener("pointerdown", e => {
+  if (e.target.closest(".item-x")) return;
+  const h = e.target.closest(".h");
+  const node = e.target.closest(".item");
+  if (h && node) { armTrim(e, node.dataset.uid, h.dataset.side); return; }
+  if (node) {
+    armDrag(e, { kind: "move", uid: node.dataset.uid }, ev => {
+      selected = node.dataset.uid;
+      seekTo(timeAtClientX(ev.clientX));
+      renderTimeline();
+      node.focus({ preventScroll: true });
+    });
+    return;
+  }
+  // empty track area: seek
+  if (e.button === 0 || e.pointerType !== "mouse") seekTo(timeAtClientX(e.clientX));
+});
+el.track.addEventListener("keydown", e => {
+  const node = e.target.closest(".item");
+  if (!node) return;
+  if (e.key === "Delete" || e.key === "Backspace") { e.preventDefault(); removeItem(node.dataset.uid); focusSelected(); }
+});
+el.track.addEventListener("focusin", e => {
+  const node = e.target.closest(".item");
+  if (node && selected !== node.dataset.uid) { selected = node.dataset.uid; renderTimeline(); }
+});
+el.track.addEventListener("contextmenu", e => { if (e.target.closest(".item")) e.preventDefault(); });
+function focusSelected() { const n = selected && itemEls.get(selected); if (n) n.focus({ preventScroll: true }); }
+
+function timeAtClientX(x) {
+  const r = el.tlInner.getBoundingClientRect();
+  return clamp((x - r.left - PAD) / pps, 0, totalDur());
+}
+
+// ruler scrubbing
+el.ruler.addEventListener("pointerdown", e => {
+  if (e.pointerType === "mouse" && e.button !== 0) return;
+  e.preventDefault();
+  el.ruler.setPointerCapture(e.pointerId);
+  seekTo(timeAtClientX(e.clientX));
+  const mv = ev => seekTo(timeAtClientX(ev.clientX));
+  const up = () => { el.ruler.removeEventListener("pointermove", mv); el.ruler.removeEventListener("pointerup", up); el.ruler.removeEventListener("pointercancel", up); };
+  el.ruler.addEventListener("pointermove", mv);
+  el.ruler.addEventListener("pointerup", up);
+  el.ruler.addEventListener("pointercancel", up);
+});
+
+/* ---------- drag & drop (mouse drag, or long-press on touch) ---------- */
+let pending = null;
+const ghost = document.createElement("div");
+ghost.className = "drag-ghost"; ghost.hidden = true;
+ghost.innerHTML = `<img alt="" draggable="false"><span></span>`;
+document.body.appendChild(ghost);
+const blockTouch = e => { if (pending && pending.active) e.preventDefault(); };
+document.addEventListener("touchmove", blockTouch, { passive: false });
+
+function armDrag(e, payload, onClick) {
+  if (e.pointerType === "mouse" && e.button !== 0) return;
+  if (pending) cleanupDrag();
+  pending = { payload, onClick, id: e.pointerId, x0: e.clientX, y0: e.clientY, x: e.clientX, y: e.clientY, touch: e.pointerType === "touch", active: false, timer: 0, index: -1, raf: 0 };
+  if (pending.touch) pending.timer = setTimeout(() => pending && beginDrag(), 320);
+  else e.preventDefault();
+  window.addEventListener("pointermove", onDragMove);
+  window.addEventListener("pointerup", onDragUp);
+  window.addEventListener("pointercancel", onDragCancel);
+}
+function onDragMove(e) {
+  if (!pending || e.pointerId !== pending.id) return;
+  pending.x = e.clientX; pending.y = e.clientY;
+  if (!pending.active) {
+    const d = Math.hypot(e.clientX - pending.x0, e.clientY - pending.y0);
+    if (pending.touch) { if (d > 10) cleanupDrag(); return; }
+    if (d < 5) return;
+    beginDrag();
+  }
+  moveDrag();
+}
+function beginDrag() {
+  const p = pending;
+  p.active = true;
+  clearTimeout(p.timer);
+  const id = p.payload.kind === "new" ? p.payload.id : seq.find(it => it.uid === p.payload.uid)?.id;
+  ghost.querySelector("img").src = thumbSrc(id);
+  ghost.querySelector("span").textContent = id;
+  ghost.hidden = false;
+  document.body.classList.add("is-dragging");
+  if (p.payload.kind === "move") itemEls.get(p.payload.uid)?.classList.add("lifting");
+  if (p.touch && navigator.vibrate) { try { navigator.vibrate(12); } catch (e) {} }
+  moveDrag();
+  const loop = () => { if (!pending || !pending.active) return; autoScroll(); pending.raf = requestAnimationFrame(loop); };
+  p.raf = requestAnimationFrame(loop);
+}
+function overTimeline() {
+  const r = el.tlScroll.getBoundingClientRect();
+  return pending.y >= r.top - 40 && pending.y <= r.bottom + 40 && pending.x >= r.left - 20 && pending.x <= r.right + 20;
+}
+function moveDrag() {
+  const p = pending;
+  ghost.style.transform = `translate(${p.x + 14}px, ${p.y + 14}px)`;
+  if (!overTimeline()) { p.index = -1; el.dropMark.style.display = "none"; return; }
+  const others = seq.filter(it => !(p.payload.kind === "move" && it.uid === p.payload.uid));
+  const innerLeft = el.tlInner.getBoundingClientRect().left;
+  let idx = others.length, markX = null;
+  for (let i = 0; i < others.length; i++) {
+    const r = itemEls.get(others[i].uid).getBoundingClientRect();
+    if (p.x < r.left + r.width / 2) { idx = i; markX = r.left - innerLeft; break; }
+  }
+  if (markX === null) {
+    const last = others[others.length - 1];
+    markX = last ? itemEls.get(last.uid).getBoundingClientRect().right - innerLeft : PAD;
+  }
+  p.index = idx;
+  el.dropMark.style.left = markX + "px";
+  el.dropMark.style.display = "block";
+}
+function autoScroll() {
+  if (!overTimeline()) return;
+  const r = el.tlScroll.getBoundingClientRect(), edge = 48;
+  let dx = 0;
+  if (pending.x < r.left + edge) dx = -Math.ceil((r.left + edge - pending.x) / 4);
+  else if (pending.x > r.right - edge) dx = Math.ceil((pending.x - (r.right - edge)) / 4);
+  if (dx) { el.tlScroll.scrollLeft += dx; moveDrag(); }
+}
+function onDragUp(e) {
+  if (!pending || e.pointerId !== pending.id) return;
+  const p = pending;
+  if (p.active) {
+    if (p.index >= 0) {
+      if (p.payload.kind === "new") insertClip(p.payload.id, p.index);
+      else {
+        const from = seq.findIndex(it => it.uid === p.payload.uid);
+        const [it] = seq.splice(from, 1);
+        seq.splice(p.index, 0, it);
+        selected = it.uid;
+        if (from !== p.index) commit(); else renderTimeline();
+      }
+    }
+    cleanupDrag();
+  } else {
+    cleanupDrag();
+    p.onClick && p.onClick(e);
+  }
+}
+function onDragCancel(e) { if (pending && e.pointerId === pending.id) cleanupDrag(); }
+function cleanupDrag() {
+  if (!pending) return;
+  clearTimeout(pending.timer);
+  cancelAnimationFrame(pending.raf);
+  if (pending.payload.kind === "move") itemEls.get(pending.payload.uid)?.classList.remove("lifting");
+  pending = null;
+  ghost.hidden = true;
+  el.dropMark.style.display = "none";
+  document.body.classList.remove("is-dragging");
+  window.removeEventListener("pointermove", onDragMove);
+  window.removeEventListener("pointerup", onDragUp);
+  window.removeEventListener("pointercancel", onDragCancel);
+}
+
+/* ---------- trimming ---------- */
+let trimTagText = "";
+function armTrim(e, u, side) {
+  e.preventDefault(); e.stopPropagation();
+  const it = seq.find(x => x.uid === u);
+  if (!it) return;
+  const c = byId[it.id];
+  if (playing) stop();
+  selected = u;
+  const x0 = e.clientX, start = it[side];
+  const prevMode = mode;
+  mode = "trim";
+  showTrimFrame(it, side);
+  renderTimeline();
+  const mv = ev => {
+    if (ev.pointerId !== e.pointerId) return;
+    const raw = start + (ev.clientX - x0) / pps;
+    const pts = side === "in" ? inPoints(c, it.out) : outPoints(c, it.in);
+    if (!pts.length) return;
+    const v = nearest(pts, raw);
+    if (v !== it[side]) { it[side] = v; renderTimeline(); showTrimFrame(it, side); }
+  };
+  const up = ev => {
+    if (ev.pointerId !== e.pointerId) return;
+    window.removeEventListener("pointermove", mv);
+    window.removeEventListener("pointerup", up);
+    window.removeEventListener("pointercancel", up);
+    mode = "timeline";
+    // park the playhead at the edit point
+    const s = segments().find(s => s.it === it);
+    if (s) tNow = side === "in" ? s.start : Math.max(s.start, s.start + s.dur - FRAME);
+    commit();
+  };
+  window.addEventListener("pointermove", mv);
+  window.addEventListener("pointerup", up);
+  window.addEventListener("pointercancel", up);
+}
+function showTrimFrame(it, side) {
+  const t = side === "in" ? it.in : Math.max(it.in, it.out - FRAME);
+  trimTagText = `${it.id} ${side === "in" ? "start" : "end"} ${tc(side === "in" ? it.in : it.out)}`;
+  setTag();
+  showFrame(it.id, t);
+}
+
+/* ---------- monitor / playback ---------- */
+// Clips play straight from their URL. If the browser or viewer refuses that, every clip after that
+// is fetched and played from memory instead (the same files the export uses).
+let srcPref = "direct";
+const blobUrls = new Map();
+const STALE = new Error("stale");
+let queue = [], qIdx = 0, playAll = false;
+
+async function blobUrlFor(id) {
+  if (!blobUrls.has(id)) blobUrls.set(id, URL.createObjectURL(await clipBlob(id)));
+  return blobUrls.get(id);
+}
+vids.forEach(v => v.addEventListener("error", () => { if (v.dataset.kind === "direct") srcPref = "blob"; }));
+
+function waitMeta(v, ms) {
+  return new Promise((resolve, reject) => {
+    if (v.error) return reject(new Error("media error"));
+    if (v.readyState >= 1) return resolve();
+    const ok = () => { off(); resolve(); };
+    const bad = () => { off(); reject(new Error("media error")); };
+    const t = setTimeout(bad, ms);
+    const off = () => { clearTimeout(t); v.removeEventListener("loadedmetadata", ok); v.removeEventListener("error", bad); };
+    v.addEventListener("loadedmetadata", ok);
+    v.addEventListener("error", bad);
+  });
+}
+// Point a <video> at a clip without waiting, so play() can run inside the click that asked for it.
+function attachSync(v, id) {
+  v.dataset.want = id;
+  if (v.dataset.clip === id && !v.error) return true;
+  const url = srcPref === "blob" ? blobUrls.get(id) : clipSrc(id);
+  if (!url) return false;
+  v.dataset.clip = id; v.dataset.kind = srcPref; v.src = url;
+  return true;
+}
+async function ensure(v, id) {
+  const stale = () => v.dataset.want !== id;
+  const useBlob = async () => {
+    const u = await blobUrlFor(id);
+    if (stale()) throw STALE;
+    v.dataset.clip = id; v.dataset.kind = "blob"; v.src = u;
+  };
+  if (!attachSync(v, id)) await useBlob();
+  try { await waitMeta(v, 10000); return; }
+  catch (e) { if (stale()) throw STALE; if (v.dataset.kind === "blob") throw new Error(`${id} couldn't be played in this browser.`); }
+  srcPref = "blob";
+  await useBlob();
+  try { await waitMeta(v, 10000); }
+  catch (e) { if (stale()) throw STALE; throw new Error(`${id} couldn't be played in this browser.`); }
+}
+async function cue(v, id, time) {
+  await ensure(v, id);
+  if (v.dataset.want !== id) throw STALE;
+  if (Math.abs(v.currentTime - time) < 0.004 && v.readyState >= 2) return;
+  await new Promise(resolve => {
+    const done = () => { clearTimeout(t); v.removeEventListener("seeked", done); resolve(); };
+    const t = setTimeout(done, 5000);
+    v.addEventListener("seeked", done);
+    v.currentTime = time;
+  });
+}
+// Start a clip at `time` and play it. Its first v.play() runs before any await, so when this is
+// called from a click the browser treats playback as the viewer's own action.
+async function startOn(v, id, time, tok) {
+  v.muted = !soundOn();
+  if (attachSync(v, id)) {
+    if (v.readyState < 1 || Math.abs(v.currentTime - time) > 0.004) { try { v.currentTime = time; } catch (e) {} }
+    try { await v.play(); return; }
+    catch (e) { if (e.name === "NotAllowedError") throw e; if (tok !== loadToken) throw STALE; }
+  }
+  await cue(v, id, time);
+  if (tok !== loadToken) throw STALE;
+  await v.play();
+}
+
+function showMsg(text, kind = "error") {
+  el.screenMsgText.textContent = text;
+  el.screenMsg.dataset.kind = kind;
+  el.screenMsg.hidden = false;
+}
+function hideMsg(kind) { if (!kind || el.screenMsg.dataset.kind === kind) el.screenMsg.hidden = true; }
+function failed(err) {
+  if (err === STALE || (err && err.name === "AbortError")) return;
+  console.error(err);
+  stop();
+  showMsg(err && err.name === "NotAllowedError"
+    ? "Your browser held playback back. Press play to start."
+    : (err && err.message) || "This clip couldn't be played.");
+}
+vids.forEach(v => {
+  v.addEventListener("waiting", () => { if (playing && v === vids[act]) showMsg("Loading…", "loading"); });
+  v.addEventListener("playing", () => { if (v === vids[act]) hideMsg("loading"); });
+});
+
+function showVideo(i) { vids[i].classList.add("on"); vids[1 - i].classList.remove("on"); }
+function showFrame(id, t) {
+  const tok = ++loadToken, v = vids[act];
+  cue(v, id, t + 0.001)
+    .then(() => { if (tok === loadToken) { showVideo(act); hideMsg(); } })
+    .catch(err => { if (tok === loadToken) failed(err); });
+}
+function showTimelineFrame() {
+  setTag();
+  if (!seq.length) return;
+  const segs = segments();
+  const total = totalDur();
+  const t = Math.min(tNow, total - FRAME / 2);
+  const s = segs[segIndexAt(segs, t)];
+  showFrame(s.it.id, s.it.in + clamp(t - s.start, 0, s.dur - FRAME));
+}
+function seekTo(t) {
+  if (playing) stop();
+  mode = "timeline"; playAll = false;
+  tNow = t;
+  updatePlayhead();
+  showTimelineFrame();
+  updateBinBadges();
+}
+
+function setPlayUI() {
+  // SVG elements have no .hidden property, so toggle the attribute itself
+  el.icoPlay.toggleAttribute("hidden", playing); el.icoPause.toggleAttribute("hidden", !playing);
+  el.btnPlay.setAttribute("aria-label", playing ? "Pause" : "Play");
+  const allOn = playing && mode === "clip" && playAll;
+  el.btnPlayAllLabel.textContent = allOn ? "Pause" : (mode === "clip" && playAll ? "Resume" : "Play all");
+  el.icoAllPlay.toggleAttribute("hidden", allOn); el.icoAllPause.toggleAttribute("hidden", !allOn);
+}
+function stop() {
+  playing = false;
+  ++loadToken;
+  vids.forEach(v => v.pause());
+  hideMsg("loading");
+  setPlayUI();
+}
+function soundOn() { return el.optSound.checked; }
+
+// Must stay synchronous up to startOn() so a click on Play counts as the viewer's action.
+function play() {
+  hideMsg();
+  if (mode === "clip") {
+    const v = vids[act];
+    if (!v.dataset.clip || v.ended || v.error) { startClip(); return; }
+    const tok = ++loadToken;
+    playing = true; setPlayUI();
+    v.muted = !soundOn();
+    v.play().then(() => { if (tok === loadToken) requestAnimationFrame(tickClip); }).catch(failed);
+    return;
+  }
+  mode = "timeline"; playAll = false;
+  playSegs = segments();
+  if (!playSegs.length) return;
+  if (tNow >= totalDur() - FRAME / 2) tNow = 0;
+  playIdx = segIndexAt(playSegs, tNow);
+  const s = playSegs[playIdx], v = vids[act];
+  const tok = ++loadToken;
+  playing = true; setPlayUI(); setTag(); updateBinBadges();
+  showVideo(act);
+  startOn(v, s.it.id, s.it.in + (tNow - s.start) + 0.001, tok).then(() => {
+    if (tok !== loadToken || !playing) return;
+    preloadNext();
+    requestAnimationFrame(tickTimeline);
+  }).catch(failed);
+}
+function preloadNext() {
+  const n = playSegs[playIdx + 1], o = vids[1 - act];
+  o.pause();
+  if (n) cue(o, n.it.id, n.it.in + 0.001).catch(() => {});
+}
+function tickTimeline() {
+  if (!playing || mode !== "timeline") return;
+  const s = playSegs[playIdx], v = vids[act];
+  const local = v.dataset.clip === s.it.id ? v.currentTime : s.it.in;
+  if (local >= s.it.out - FRAME * 0.5 || v.ended) {
+    if (playIdx + 1 >= playSegs.length) {
+      tNow = s.start + s.dur; stop(); updatePlayhead(); return;
+    }
+    playIdx++;
+    const ns = playSegs[playIdx], nv = vids[1 - act];
+    v.pause();
+    act = 1 - act;
+    showVideo(act);
+    tNow = ns.start;
+    startOn(nv, ns.it.id, ns.it.in + 0.001, loadToken).catch(failed);
+    preloadNext();
+  } else {
+    tNow = s.start + Math.max(0, local - s.it.in);
+  }
+  updatePlayhead();
+  followPlayhead();
+  requestAnimationFrame(tickTimeline);
+}
+function followPlayhead() {
+  const x = PAD + tNow * pps, sc = el.tlScroll, w = sc.clientWidth;
+  if (x > sc.scrollLeft + w - 40 || x < sc.scrollLeft) sc.scrollLeft = Math.max(0, x - 60);
+}
+
+// Clip mode: one clip from the bin, or every clip in order (Play all).
+function playClips(startId, all) {
+  stop();
+  hideMsg();
+  mode = "clip"; playAll = all;
+  queue = all ? CLIPS.map(c => c.id) : [startId];
+  qIdx = Math.max(0, queue.indexOf(startId));
+  startClip();
+}
+function startClip() {
+  const id = queue[qIdx], v = vids[act];
+  if (!id) return;
+  previewId = id;
+  const tok = ++loadToken;
+  playing = true; setPlayUI(); setTag(); updateBinBadges(); revealCard(id);
+  showVideo(act);
+  startOn(v, id, 0, tok).then(() => {
+    if (tok !== loadToken || !playing) return;
+    updatePlayhead();
+    const next = playAll && queue[qIdx + 1];
+    if (next) cue(vids[1 - act], next, 0).catch(() => {});
+    requestAnimationFrame(tickClip);
+  }).catch(failed);
+}
+function nextClip() {
+  if (playAll && qIdx + 1 < queue.length) {
+    vids[act].pause();
+    qIdx++;
+    act = 1 - act;
+    startClip();
+  } else {
+    stop();
+    updatePlayhead();
+  }
+}
+function tickClip() {
+  if (!playing || mode !== "clip") return;
+  updatePlayhead();
+  requestAnimationFrame(tickClip);
+}
+vids.forEach(v => v.addEventListener("ended", () => {
+  if (mode === "clip" && playing && v === vids[act]) nextClip();
+}));
+function revealCard(id) {
+  const card = el.bin.querySelector(`[data-id="${id}"]`);
+  if (!card) return;
+  const g = el.bin.getBoundingClientRect(), c = card.getBoundingClientRect();
+  if (c.top < g.top) el.bin.scrollTop -= g.top - c.top + 10;
+  else if (c.bottom > g.bottom) el.bin.scrollTop += c.bottom - g.bottom + 10;
+}
+// A click on a card plays that clip; while Play all is on, the run carries on from there.
+function previewClip(id) { playClips(id, mode === "clip" && playAll); }
+
+el.btnPlay.addEventListener("click", () => { playing ? stop() : play(); });
+el.btnPlayAll.addEventListener("click", () => {
+  if (mode === "clip" && playAll) { playing ? stop() : play(); return; }
+  playClips(CLIPS[0].id, true);
+});
+$("btnStart").addEventListener("click", () => {
+  if (mode === "clip") { stop(); vids[act].currentTime = 0; updatePlayhead(); return; }
+  seekTo(0); el.tlScroll.scrollLeft = 0;
+});
+el.optSound.addEventListener("change", () => { vids.forEach(v => v.muted = !soundOn()); save(); });
+
+document.addEventListener("keydown", e => {
+  if (e.target.closest("input, textarea, select") || !el.sheetWrap.hidden) return;
+  if (e.key === " " && !e.target.closest("button")) { e.preventDefault(); playing ? stop() : play(); }
+  else if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && mode !== "clip" && !e.target.closest(".item")) {
+    e.preventDefault();
+    seekTo(clamp(tNow + (e.key === "ArrowLeft" ? -1 : 1) * (e.shiftKey ? 1 : FRAME), 0, totalDur()));
+  } else if (e.key === "Home") { seekTo(0); }
+});
+
+/* ---------- zoom / clear ---------- */
+function setZoom(next, anchorT) {
+  const sc = el.tlScroll;
+  const t = anchorT ?? ((sc.scrollLeft + sc.clientWidth / 2 - PAD) / pps);
+  pps = next;
+  renderTimeline();
+  sc.scrollLeft = Math.max(0, PAD + t * pps - sc.clientWidth / 2);
+}
+function fitZoom() {
+  const total = totalDur(), w = el.tlScroll.clientWidth - PAD - 124;
+  if (!total) return 16;
+  let best = ZOOMS[0];
+  for (const z of ZOOMS) if (total * z <= w) best = z;
+  return Math.min(best, 48);
+}
+$("zoomIn").addEventListener("click", () => { autoFit = false; const i = ZOOMS.indexOf(pps); setZoom(ZOOMS[Math.min(ZOOMS.length - 1, (i < 0 ? 3 : i) + 1)], tNow); });
+$("zoomOut").addEventListener("click", () => { autoFit = false; const i = ZOOMS.indexOf(pps); setZoom(ZOOMS[Math.max(0, (i < 0 ? 3 : i) - 1)], tNow); });
+$("zoomFit").addEventListener("click", () => { autoFit = true; pps = fitZoom(); renderTimeline(); el.tlScroll.scrollLeft = 0; });
+
+const btnClear = $("btnClear");
+let clearArmed = 0;
+btnClear.addEventListener("click", () => {
+  if (!seq.length) return;
+  if (!clearArmed) {
+    btnClear.textContent = "Clear all clips?";
+    clearArmed = setTimeout(() => { clearArmed = 0; btnClear.textContent = "Clear"; }, 3000);
+    return;
+  }
+  clearTimeout(clearArmed); clearArmed = 0; btnClear.textContent = "Clear";
+  seq = []; selected = null; tNow = 0; mode = "timeline";
+  commit();
+});
+
+/* ---------- export ---------- */
+const blobCache = new Map();
+async function clipBlob(id) {
+  if (blobCache.has(id)) return blobCache.get(id);
+  const r = await fetch(clipSrc(id));
+  if (!r.ok) throw new Error(`Couldn't load ${id} (HTTP ${r.status}). Check your connection and try again.`);
+  const b = await r.blob();
+  blobCache.set(id, b);
+  return b;
+}
+let mbPromise = null;
+const loadMB = () => (mbPromise ||= import(MB_URL).catch(e => { mbPromise = null; throw new Error("Couldn't load the export engine. Check your connection and try again."); }));
+
+// Downloads go through the viewer's save prompt when the page runs inside Claude.
+const inViewer = !!(window.claude && typeof window.claude.use === "function");
+const downloadsReady = inViewer ? window.claude.use("downloads").catch(() => null) : Promise.resolve(null);
+
+let exportJob = null, resultBlob = null, resultUrl = null, resultName = "";
+
+function openSheet() {
+  el.sheetWrap.hidden = false;
+  el.sheetTitle.textContent = "Exporting your cut";
+  el.progressBox.hidden = false; el.progressBar.style.width = "0%";
+  el.sheetStatus.textContent = "Starting…"; el.sheetStatus.classList.remove("err");
+  el.resultVideo.hidden = true; el.sheetSum.hidden = true;
+  el.btnSave.hidden = true; el.btnSheetClose.textContent = "Cancel";
+}
+function closeSheet() {
+  if (exportJob) exportJob.cancelled = true;
+  el.sheetWrap.hidden = true;
+  el.resultVideo.pause();
+  el.resultVideo.removeAttribute("src"); el.resultVideo.load();
+  if (resultUrl) { URL.revokeObjectURL(resultUrl); resultUrl = null; }
+  resultBlob = null;
+  el.btnExport.focus();
+}
+el.btnSheetClose.addEventListener("click", closeSheet);
+el.sheetWrap.addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); });
+
+el.btnExport.addEventListener("click", async () => {
+  if (!seq.length || exportJob) return;
+  stop();
+  openSheet();
+  const job = exportJob = { cancelled: false };
+  const items = seq.map(it => ({ ...it }));
+  const withSound = soundOn();
+  const status = t => { el.sheetStatus.textContent = t; };
+  const progress = f => { el.progressBar.style.width = (clamp(f, 0, 1) * 100).toFixed(1) + "%"; };
+  try {
+    status("Loading the export engine…");
+    const MB = await loadMB();
+    if (job.cancelled) return;
+    const { Input, Output, BlobSource, BufferTarget, Mp4OutputFormat, EncodedPacketSink, EncodedVideoPacketSource, EncodedAudioPacketSource, ALL_FORMATS } = MB;
+
+    const output = new Output({ format: new Mp4OutputFormat({ fastStart: "in-memory" }), target: new BufferTarget() });
+    const vSrc = new EncodedVideoPacketSource("avc");
+    output.addVideoTrack(vSrc, { frameRate: FPS });
+    let aSrc = null;
+    if (withSound) { aSrc = new EncodedAudioPacketSource("aac"); output.addAudioTrack(aSrc); }
+    await output.start();
+
+    let offset = 0, aCursor = 0, vMetaSent = false, aMetaSent = false;
+    for (let i = 0; i < items.length; i++) {
+      const it = items[i], c = byId[it.id];
+      status(`Fetching ${it.id} (${i + 1} of ${items.length})…`);
+      const blob = await clipBlob(it.id);
+      if (job.cancelled) { await output.cancel(); return; }
+      status(`Joining ${it.id} (${i + 1} of ${items.length})…`);
+
+      const input = new Input({ source: new BlobSource(blob), formats: ALL_FORMATS });
+      const vt = await input.getPrimaryVideoTrack();
+      const vs = new EncodedPacketSink(vt);
+      const startKey = await vs.getKeyPacket(it.in + 1e-4, { verifyKeyPackets: true }) || await vs.getFirstKeyPacket();
+      const endKey = it.out < c.dur - EPS ? await vs.getKeyPacket(it.out + 1e-4, { verifyKeyPackets: true }) : null;
+      const segStart = startKey.timestamp;
+      let segEnd = endKey && endKey.timestamp > segStart ? endKey.timestamp : null;
+
+      const vMeta = vMetaSent ? undefined : { decoderConfig: await vt.getDecoderConfig() };
+      let maxEnd = segStart;
+      for await (const p of vs.packets(startKey, segEnd !== null ? endKey : undefined)) {
+        await vSrc.add(p.clone({ timestamp: offset + (p.timestamp - segStart) }), vMetaSent ? undefined : vMeta);
+        vMetaSent = true;
+        maxEnd = Math.max(maxEnd, p.timestamp + p.duration);
+      }
+      if (segEnd === null) segEnd = maxEnd;
+
+      if (aSrc) {
+        const at = await input.getPrimaryAudioTrack();
+        if (at) {
+          const as = new EncodedPacketSink(at);
+          const aMeta = aMetaSent ? undefined : { decoderConfig: await at.getDecoderConfig() };
+          let p = (await as.getPacket(segStart)) || (await as.getFirstPacket());
+          while (p && p.timestamp + p.duration / 2 < segEnd) {
+            if (p.timestamp + p.duration / 2 >= segStart) {
+              // keep audio in step with the video; never step backwards across a cut
+              const ts = Math.max(aCursor, offset + (p.timestamp - segStart));
+              await aSrc.add(p.clone({ timestamp: ts }), aMetaSent ? undefined : aMeta);
+              aMetaSent = true;
+              aCursor = ts + p.duration;
+            }
+            p = await as.getNextPacket(p);
+          }
+        }
+      }
+      offset += segEnd - segStart;
+      input.dispose();
+      progress((i + 1) / items.length * 0.95);
+      if (job.cancelled) { await output.cancel(); return; }
+    }
+
+    status("Finishing the file…");
+    await output.finalize();
+    if (job.cancelled) return;
+    resultBlob = new Blob([output.target.buffer], { type: "video/mp4" });
+    resultUrl = URL.createObjectURL(resultBlob);
+    const d = new Date(), p2 = n => String(n).padStart(2, "0");
+    resultName = `rita-cut-${d.getFullYear()}${p2(d.getMonth() + 1)}${p2(d.getDate())}-${p2(d.getHours())}${p2(d.getMinutes())}.mp4`;
+    progress(1);
+    el.sheetTitle.textContent = "Your cut is ready";
+    el.progressBox.hidden = true;
+    status("Watch it here, then save it.");
+    el.resultVideo.src = resultUrl;
+    el.resultVideo.hidden = false;
+    el.sheetSum.textContent = `${resultName} · ${tc(offset)} · ${fmtMB(resultBlob.size)} · ${items.length} clip${items.length === 1 ? "" : "s"}${withSound ? "" : " · no sound"}`;
+    el.sheetSum.hidden = false;
+    el.btnSaveLabel.textContent = `Save MP4 (${fmtMB(resultBlob.size)})`;
+    el.btnSave.hidden = false;
+    el.btnSheetClose.textContent = "Close";
+    el.btnSave.focus();
+  } catch (err) {
+    if (job.cancelled) return;
+    console.error(err);
+    el.sheetTitle.textContent = "Export didn't finish";
+    el.progressBox.hidden = true;
+    el.sheetStatus.classList.add("err");
+    status(err && err.message ? err.message : "Something went wrong while joining the clips. Try again.");
+    el.btnSheetClose.textContent = "Close";
+  } finally {
+    if (exportJob === job) exportJob = null;
+  }
+});
+
+el.btnSave.addEventListener("click", async () => {
+  if (!resultBlob) return;
+  const dl = await downloadsReady;
+  if (dl) {
+    try {
+      await dl.save({ filename: resultName, data: resultBlob });
+      el.sheetStatus.classList.remove("err");
+      el.sheetStatus.textContent = "Saved.";
+    } catch (e) {
+      const code = e && e.code;
+      el.sheetStatus.classList.toggle("err", code !== "declined");
+      el.sheetStatus.textContent =
+        code === "declined" ? "Save cancelled. Press Save MP4 to try again." :
+        code === "rate_limited" ? "A save prompt is already open. Finish it, then try again." :
+        code === "too_large" ? "This cut is too large to save here. Try a shorter cut." :
+        "Saving files isn't available in this view.";
+    }
+    return;
+  }
+  if (inViewer) {
+    el.sheetStatus.classList.add("err");
+    el.sheetStatus.textContent = "Saving files isn't available in this view. Open the page in Claude to save.";
+    return;
+  }
+  // Outside a Claude viewer (a local copy): a normal browser download.
+  const a = document.createElement("a");
+  a.href = resultUrl; a.download = resultName;
+  document.body.appendChild(a); a.click(); a.remove();
+  el.sheetStatus.textContent = "Download started.";
+});
+
+/* ---------- boot ---------- */
+$("spec").textContent = `${CLIPS.length} clips · 1280×720 · 25 fps`;
+if (matchMedia("(hover: none) and (pointer: coarse)").matches) {
+  $("binHint").textContent = "Tap + to add, or press and hold to drag";
+  $("trimHint").textContent = "Tap a clip, then drag its amber edges to trim";
+}
+load();
+renderBin();
+pps = fitZoom();
+renderTimeline();
+selected = null;
+showTimelineFrame();
+setPlayUI();
+let rzT = 0;
+const refit = () => { if (autoFit && mode !== "trim" && !pending) pps = fitZoom(); renderTimeline(); };
+window.addEventListener("resize", () => { clearTimeout(rzT); rzT = setTimeout(refit, 120); });
+requestAnimationFrame(refit);
+})();
+</script>
+</body>
+</html>
