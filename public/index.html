@@ -67,7 +67,7 @@
     .bento {
       display: grid;
       grid-template-columns: repeat(12, 1fr);
-      grid-template-rows: 360px 280px 280px 260px;
+      grid-template-rows: 420px 280px 280px 220px;
       gap: 3px;
     }
 
@@ -201,20 +201,20 @@
          Feedback   → col 9–13
     ─────────────────────── */
 
+    /* Layout: the four things we do sit in the first screen —
+       cinema (Cinemateca), events (Eventos), community (Join the Club), work (Vamos produzir juntos) */
     .bc-historia  { grid-column: 1 / 9;  grid-row: 1; }
     .bc-cinemateca{ grid-column: 9 / 13; grid-row: 1; }
 
     .bc-eventos   { grid-column: 1 / 5;  grid-row: 2; }
-    .bc-ko        { grid-column: 5 / 9;  grid-row: 2; }
-    .bc-team      { grid-column: 9 / 13; grid-row: 2; }
+    .bc-join      { grid-column: 5 / 9;  grid-row: 2; }
+    .bc-opencall  { grid-column: 9 / 13; grid-row: 2; }
 
-    .bc-join      { grid-column: 1 / 5;  grid-row: 3; }
+    .bc-team      { grid-column: 1 / 5;  grid-row: 3; }
     .bc-fototeca  { grid-column: 5 / 9;  grid-row: 3; }
-    .bc-mercado   { grid-column: 9 / 13; grid-row: 3; }
+    .bc-crowd     { grid-column: 9 / 13; grid-row: 3; }
 
-    .bc-opencall  { grid-column: 1 / 5;  grid-row: 4; }
-    .bc-crowd     { grid-column: 5 / 9;  grid-row: 4; }
-    .bc-feedback  { grid-column: 9 / 13; grid-row: 4; }
+    .bc-feedback  { grid-column: 1 / 13; grid-row: 4; }
 
     /* Historia: bigger title */
     .bc-historia .bc-title {
@@ -244,6 +244,36 @@
       letter-spacing: 0.02em;
       margin-bottom: 0.1rem;
     }
+
+    /* Hero: one-line pitch + two buttons */
+    .bc-historia .bc-grad { background: linear-gradient(180deg, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.4) 35%, rgba(0,0,0,0.9) 100%); }
+    .bc-sub {
+      font-family: var(--font-family);
+      font-size: 0.86rem;
+      font-weight: 500;
+      line-height: 1.6;
+      color: rgba(240,232,216,0.85);
+      max-width: 580px;
+      margin-top: 0.2rem;
+    }
+    .bc-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 0.7rem; margin-top: 1rem; }
+    .bc-btn {
+      display: inline-flex; align-items: center;
+      font-family: var(--font-family);
+      font-size: 0.66rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none;
+      color: #fff; background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(240,232,216,0.5); border-radius: 3px;
+      padding: 0.7rem 1.1rem; cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+    .bc-btn:hover { background: rgba(240,232,216,0.14); border-color: rgba(240,232,216,0.85); }
+    .bc-btn--solid { background: rgba(240,232,216,0.94); color: #0a0908; border-color: transparent; }
+    .bc-btn--solid:hover { background: #fff; }
+    .bc-more {
+      font-family: var(--font-family); font-size: 0.64rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(240,232,216,0.6); background: none; border: none; padding: 0.4rem 0.2rem; cursor: pointer; transition: color 0.2s;
+    }
+    .bc-more:hover { color: #fff; }
 
     /* .KO: red */
     .bc-ko { background: #a60000; }
@@ -310,23 +340,21 @@
     @media (max-width: 1024px) {
       .bento {
         grid-template-columns: repeat(6, 1fr);
-        grid-template-rows: 300px 240px 220px 220px 200px;
+        grid-template-rows: 420px 240px 220px 200px;
       }
       /* Row 1: Historia + Cinemateca */
       .bc-historia  { grid-column: 1 / 5; grid-row: 1; }
       .bc-cinemateca{ grid-column: 5 / 7; grid-row: 1; }
-      /* Row 2: Eventos + .KO + The team */
+      /* Row 2: Eventos + Join + Vamos produzir juntos */
       .bc-eventos   { grid-column: 1 / 3; grid-row: 2; }
-      .bc-ko        { grid-column: 3 / 5; grid-row: 2; }
-      .bc-team      { grid-column: 5 / 7; grid-row: 2; }
-      /* Row 3: Join + Fototeca + Mercado */
-      .bc-join      { grid-column: 1 / 3; grid-row: 3; }
+      .bc-join      { grid-column: 3 / 5; grid-row: 2; }
+      .bc-opencall  { grid-column: 5 / 7; grid-row: 2; }
+      /* Row 3: The team + Fototeca + Crowdfunding */
+      .bc-team      { grid-column: 1 / 3; grid-row: 3; }
       .bc-fototeca  { grid-column: 3 / 5; grid-row: 3; }
-      .bc-mercado   { grid-column: 5 / 7; grid-row: 3; }
-      /* Row 4: Community (full width as 3 equal) */
-      .bc-opencall  { grid-column: 1 / 3; grid-row: 4; }
-      .bc-crowd     { grid-column: 3 / 5; grid-row: 4; }
-      .bc-feedback  { grid-column: 5 / 7; grid-row: 4; }
+      .bc-crowd     { grid-column: 5 / 7; grid-row: 3; }
+      /* Row 4: Feedback, full width */
+      .bc-feedback  { grid-column: 1 / 7; grid-row: 4; }
     }
 
     @media (max-width: 700px) {
@@ -334,27 +362,27 @@
       .intro-stats { gap: 1.5rem; }
       .bento {
         grid-template-columns: 1fr 1fr;
-        grid-template-rows: 260px 200px 200px 200px 200px 200px 200px;
+        grid-template-rows: 470px 200px 200px 200px 200px;
       }
       .bc-historia  { grid-column: 1 / 3; grid-row: 1; }
       .bc-cinemateca{ grid-column: 1 / 2; grid-row: 2; }
       .bc-eventos   { grid-column: 2 / 3; grid-row: 2; }
-      .bc-ko        { grid-column: 1 / 3; grid-row: 3; }
+      .bc-join      { grid-column: 1 / 2; grid-row: 3; }
+      .bc-opencall  { grid-column: 2 / 3; grid-row: 3; }
       .bc-team      { grid-column: 1 / 2; grid-row: 4; }
-      .bc-join      { grid-column: 2 / 3; grid-row: 4; }
-      .bc-fototeca  { grid-column: 1 / 2; grid-row: 5; }
-      .bc-mercado   { grid-column: 2 / 3; grid-row: 5; }
-      .bc-opencall  { grid-column: 1 / 2; grid-row: 6; }
-      .bc-crowd     { grid-column: 2 / 3; grid-row: 6; }
-      .bc-feedback  { grid-column: 1 / 3; grid-row: 7; }
+      .bc-fototeca  { grid-column: 2 / 3; grid-row: 4; }
+      .bc-crowd     { grid-column: 1 / 2; grid-row: 5; }
+      .bc-feedback  { grid-column: 2 / 3; grid-row: 5; }
       .bc-historia .bc-title { font-size: 1.4rem; }
+      .bc-sub { font-size: 0.8rem; }
     }
 
     @media (max-width: 420px) {
-      .bento { grid-template-columns: 1fr; grid-auto-rows: 220px; }
-      .bc-historia, .bc-cinemateca, .bc-eventos, .bc-ko, .bc-team,
-      .bc-join, .bc-fototeca, .bc-mercado,
+      .bento { grid-template-columns: 1fr; grid-template-rows: none; grid-auto-rows: 220px; }
+      .bc-historia, .bc-cinemateca, .bc-eventos, .bc-team,
+      .bc-join, .bc-fototeca,
       .bc-opencall, .bc-crowd, .bc-feedback { grid-column: 1; grid-row: auto; }
+      .bc-historia { grid-row: span 2; }
     }
   </style>
   <script src="/i18n-dict.js"></script>
@@ -374,7 +402,7 @@
   <!-- Bento Grid -->
   <div class="bento">
 
-    <!-- HISTÓRIA -->
+    <!-- HISTÓRIA (hero) -->
     <div class="bc bc-historia" id="bc-historia-tile" style="cursor:pointer;">
       <div class="bc-img" style="background-image:url('/Imagenes/03%20Fototeca/MashUp%20%233%20-%203%20-%2005.12.25.jpg.png')"></div>
       <div class="bc-grad"></div>
@@ -384,6 +412,28 @@
           <span data-lang="en">We make cinema.<br>In Lisbon, since 2023.</span>
           <span data-lang="es">Hacemos cine.<br>En Lisboa, desde 2023.</span>
         </h2>
+        <p class="bc-sub">
+          <span data-lang="pt">Uma comunidade de cinema independente: produzimos as nossas curtas, organizamos projeções e noites de networking, e estamos abertos a coproduzir com outras equipas.</span>
+          <span data-lang="en">An independent film community: we produce our own shorts, host screenings and networking nights, and we’re open to co-producing with other teams.</span>
+          <span data-lang="es">Una comunidad de cine independiente: producimos nuestros propios cortos, organizamos proyecciones y noches de networking, y estamos abiertos a coproducir con otros equipos.</span>
+        </p>
+        <div class="bc-actions">
+          <a class="bc-btn bc-btn--solid" href="/eventos/" onclick="event.stopPropagation()">
+            <span data-lang="pt">Ver agenda →</span>
+            <span data-lang="en">See agenda →</span>
+            <span data-lang="es">Ver agenda →</span>
+          </a>
+          <button type="button" class="bc-btn" data-post="concurso">
+            <span data-lang="pt">Vamos produzir juntos →</span>
+            <span data-lang="en">Let’s produce together →</span>
+            <span data-lang="es">Produzcamos juntos →</span>
+          </button>
+          <button type="button" class="bc-more">
+            <span data-lang="pt">A nossa história →</span>
+            <span data-lang="en">Our story →</span>
+            <span data-lang="es">Nuestra historia →</span>
+          </button>
+        </div>
         <div class="bc-stats">
           <div class="bc-stat">
             <strong>5</strong>
@@ -407,6 +457,86 @@
       </div>
     </div>
 
+    <!-- CINEMATECA -->
+    <a href="/cinemateca/" class="bc bc-cinemateca">
+      <div class="bc-img" style="background-image:url('/media/fototeca/full/nl1-05.jpg')"></div>
+      <div class="bc-grad"></div>
+      <div class="bc-body">
+        <h2 class="bc-title">Cinemateca</h2>
+        <p class="bc-desc">
+          <span data-lang="pt">As nossas curtas-metragens, para ver.</span>
+          <span data-lang="en">Our short films, ready to watch.</span>
+          <span data-lang="es">Nuestros cortometrajes, listos para ver.</span>
+        </p>
+        <span class="bc-link">
+          <span data-lang="pt">Entrar →</span>
+          <span data-lang="en">Enter →</span>
+          <span data-lang="es">Entrar →</span>
+        </span>
+      </div>
+    </a>
+
+    <!-- EVENTOS -->
+    <a href="/eventos/" class="bc bc-eventos">
+      <div class="bc-img" style="background-image:url('/media/fototeca/full/mu5-02.jpg')"></div>
+      <div class="bc-grad"></div>
+      <div class="bc-body">
+        <h2 class="bc-title">Eventos</h2>
+        <p class="bc-desc">
+          <span data-lang="pt">Projeções de curtas e noites de networking.</span>
+          <span data-lang="en">Short-film screenings and networking nights.</span>
+          <span data-lang="es">Proyecciones de cortos y noches de networking.</span>
+        </p>
+        <span class="bc-link">
+          <span data-lang="pt">Ver agenda →</span>
+          <span data-lang="en">See agenda →</span>
+          <span data-lang="es">Ver agenda →</span>
+        </span>
+      </div>
+    </a>
+
+    <!-- JOIN THE CLUB (community) -->
+    <div class="bc bc-join" id="bc-join-tile" style="cursor:pointer;">
+      <div class="bc-img" style="background-image:url('/media/fototeca/full/nl1-11.jpg')"></div>
+      <div class="bc-grad"></div>
+      <div class="bc-body">
+        <h2 class="bc-title">Join the Club</h2>
+        <p class="bc-desc">
+          <span data-lang="pt">Faz parte da comunidade.</span>
+          <span data-lang="en">Be part of the community.</span>
+          <span data-lang="es">Sé parte de la comunidad.</span>
+        </p>
+        <span class="bc-link">
+          <span data-lang="pt">Saber mais →</span>
+          <span data-lang="en">Learn more →</span>
+          <span data-lang="es">Saber más →</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- VAMOS PRODUZIR JUNTOS (opens the co-production / open call proposal) -->
+    <div class="bc bc-opencall" data-post="concurso" style="cursor:pointer;">
+      <div class="bc-img" style="background-image:url('/media/fototeca/full/jg-16.jpg')"></div>
+      <div class="bc-grad"></div>
+      <div class="bc-body">
+        <h2 class="bc-title">
+          <span data-lang="pt">Vamos produzir juntos</span>
+          <span data-lang="en">Let’s produce together</span>
+          <span data-lang="es">Produzcamos juntos</span>
+        </h2>
+        <p class="bc-desc">
+          <span data-lang="pt">Produzimos as nossas curtas e coproduzimos com outras equipas.</span>
+          <span data-lang="en">We produce our own shorts and co-produce with other teams.</span>
+          <span data-lang="es">Producimos nuestros cortos y coproducimos con otros equipos.</span>
+        </p>
+        <span class="bc-link">
+          <span data-lang="pt">Enviar proposta →</span>
+          <span data-lang="en">Send a proposal →</span>
+          <span data-lang="es">Enviar propuesta →</span>
+        </span>
+      </div>
+    </div>
+
     <!-- THE TEAM -->
     <a href="/team/" class="bc bc-team">
       <div class="bc-img" style="background-image:url('/media/fototeca/full/jg-16.jpg')"></div>
@@ -426,65 +556,17 @@
       </div>
     </a>
 
-    <!-- EVENTOS -->
-    <a href="/eventos/" class="bc bc-eventos">
-      <div class="bc-img" style="background-image:url('/media/fototeca/full/mu5-02.jpg')"></div>
-      <div class="bc-grad"></div>
-      <div class="bc-body">
-        <h2 class="bc-title">Eventos</h2>
-        <p class="bc-desc">
-          <span data-lang="pt">Projeções e encontros abertos a todos.</span>
-          <span data-lang="en">Screenings and meetups open to all.</span>
-          <span data-lang="es">Proyecciones y encuentros abiertos a todos.</span>
-        </p>
-        <span class="bc-link">
-          <span data-lang="pt">Ver agenda →</span>
-          <span data-lang="en">See agenda →</span>
-          <span data-lang="es">Ver agenda →</span>
-        </span>
-      </div>
-    </a>
-
-    <!-- CINEMATECA -->
-    <a href="/cinemateca/" class="bc bc-cinemateca">
-      <div class="bc-img" style="background-image:url('/media/fototeca/full/nl1-05.jpg')"></div>
-      <div class="bc-grad"></div>
-      <div class="bc-body">
-        <h2 class="bc-title">Cinemateca</h2>
-        <p class="bc-desc">
-          <span data-lang="pt">Os nossos filmes, disponíveis para ver.</span>
-          <span data-lang="en">Our films, available to watch.</span>
-          <span data-lang="es">Nuestras películas, disponibles para ver.</span>
-        </p>
-        <span class="bc-link">
-          <span data-lang="pt">Entrar →</span>
-          <span data-lang="en">Enter →</span>
-          <span data-lang="es">Entrar →</span>
-        </span>
-      </div>
-    </a>
-
-    <!-- .KO FESTIVAL -->
-    <a href="/comunidad/" class="bc bc-ko">
-      <div class="bc-img" style="background-image:url('/Imagenes/01%20Banners/KO%20-%20LISC.png')"></div>
-      <div class="bc-grad"></div>
-      <div class="bc-body">
-        <h2 class="bc-title">.KO</h2>
-        <p class="bc-desc">Lisbon International Short-film Championship</p>
-        <span class="bc-link">
-          <span data-lang="pt">Saber mais →</span>
-          <span data-lang="en">Learn more →</span>
-          <span data-lang="es">Saber más →</span>
-        </span>
-      </div>
-    </a>
-
     <!-- FOTOTECA -->
     <a href="/fototeca/" class="bc bc-fototeca">
       <div class="bc-img" style="background-image:url('/media/fototeca/full/eac-23.jpg')"></div>
       <div class="bc-grad"></div>
       <div class="bc-body">
         <h2 class="bc-title">Fototeca</h2>
+        <p class="bc-desc">
+          <span data-lang="pt">Fotografias de todos os nossos eventos.</span>
+          <span data-lang="en">Photos from all our events.</span>
+          <span data-lang="es">Fotografías de todos nuestros eventos.</span>
+        </p>
         <span class="bc-link">
           <span data-lang="pt">Ver galeria →</span>
           <span data-lang="en">See gallery →</span>
@@ -492,48 +574,6 @@
         </span>
       </div>
     </a>
-
-    <!-- MERCADO -->
-    <a href="/mercado/" class="bc bc-mercado">
-      <div class="bc-img" style="background-image:url('/media/fototeca/full/jg-06.jpg')"></div>
-      <div class="bc-grad"></div>
-      <div class="bc-body">
-        <h2 class="bc-title">Mercado</h2>
-        <span class="bc-link">
-          <span data-lang="pt">Ver loja →</span>
-          <span data-lang="en">See shop →</span>
-          <span data-lang="es">Ver tienda →</span>
-        </span>
-      </div>
-    </a>
-
-    <!-- JOIN THE CLUB -->
-    <div class="bc bc-join" id="bc-join-tile" style="cursor:pointer;">
-      <div class="bc-img" style="background-image:url('/media/fototeca/full/nl1-11.jpg')"></div>
-      <div class="bc-grad"></div>
-      <div class="bc-body">
-        <h2 class="bc-title">Join the Club</h2>
-        <span class="bc-link">
-          <span data-lang="pt">Saber mais →</span>
-          <span data-lang="en">Learn more →</span>
-          <span data-lang="es">Saber más →</span>
-        </span>
-      </div>
-    </div>
-
-    <!-- OPEN CALL -->
-    <div class="bc bc-opencall" data-post="concurso" style="cursor:pointer;">
-      <div class="bc-img" style="background-image:url('/media/fototeca/full/jg-16.jpg')"></div>
-      <div class="bc-grad"></div>
-      <div class="bc-body">
-        <h2 class="bc-title">Open Call</h2>
-        <span class="bc-link">
-          <span data-lang="pt">Submeter guião →</span>
-          <span data-lang="en">Submit script →</span>
-          <span data-lang="es">Enviar guión →</span>
-        </span>
-      </div>
-    </div>
 
     <!-- CROWDFUNDING -->
     <div class="bc bc-crowd" data-post="crowdfunding" style="cursor:pointer;">
@@ -635,14 +675,14 @@
         tag:   { pt:'Open Call', en:'Open Call', es:'Open Call' },
         date:  '2026',
         title: {
-          pt:'O teu projeto, produzido de forma indie',
-          en:'Your project, produced the indie way',
-          es:'Tu proyecto, producido de forma indie'
+          pt:'Vamos produzir juntos',
+          en:'Let’s produce together',
+          es:'Produzcamos juntos'
         },
         body: {
-          pt: `<p>Tens uma ideia para uma curta, documentário, videoclipe ou outro projeto audiovisual? Envia-nos a proposta. Se virmos potencial, entramos em contacto para desenvolver e produzir juntos.</p>`,
-          en: `<p>Have an idea for a short film, documentary, music video or other audiovisual project? Send us your proposal. If we see potential, we'll reach out to develop and produce it together.</p>`,
-          es: `<p>¿Tienes una idea para un cortometraje, documental, videoclip u otro proyecto audiovisual? Envíanos la propuesta. Si vemos potencial, nos ponemos en contacto para desarrollarla y producirla juntos.</p>`
+          pt: `<p>Produzimos as nossas próprias curtas-metragens e estamos abertos a coproduzir com outras equipas.</p><p>Tens uma ideia para uma curta, documentário, videoclipe ou outro projeto audiovisual? Envia-nos a proposta. Se virmos potencial, entramos em contacto para desenvolver e produzir juntos.</p>`,
+          en: `<p>We produce our own short films and we’re open to co-producing with other teams.</p><p>Have an idea for a short film, documentary, music video or other audiovisual project? Send us your proposal. If we see potential, we’ll reach out to develop and produce it together.</p>`,
+          es: `<p>Producimos nuestros propios cortometrajes y estamos abiertos a coproducir con otros equipos.</p><p>¿Tienes una idea para un cortometraje, documental, videoclip u otro proyecto audiovisual? Envíanos la propuesta. Si vemos potencial, nos ponemos en contacto para desarrollarla y producirla juntos.</p>`
         },
         html: true,
         link:'https://forms.gle/vkaw7RfY7TGzcLM59', linkLabel:{ pt:'Submeter proposta →', en:'Submit proposal →', es:'Enviar propuesta →' }
@@ -758,7 +798,7 @@
       document.querySelectorAll('[data-post]').forEach(function(c) {
         c.addEventListener('click', function(e) {
           if (e.target.closest('.blog-link')) return;
-          e.preventDefault(); openModal(c.dataset.post);
+          e.preventDefault(); e.stopPropagation(); openModal(c.dataset.post);
         });
       });
       document.getElementById('post-modal').addEventListener('click', function(e) {

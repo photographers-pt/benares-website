@@ -46,8 +46,6 @@ function createHeader() {
       <ul>
         <li><a href="/eventos/">Eventos</a></li>
         <li><a href="/cinemateca/">Cinemateca</a></li>
-        <li><a href="/comunidad/">.KO</a></li>
-        <li><a href="/mercado/">Mercado</a></li>
         <li><a href="/fototeca/">Fototeca</a></li>
         <li><a href="/team/">The team</a></li>
         <li><a href="/contactos/">Contactos</a></li>
