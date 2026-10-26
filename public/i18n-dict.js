@@ -253,7 +253,7 @@
       ['Moda', 'Fashion', 'Moda'],
       ['Laboratorio', 'Laboratory', 'Laboratorio'],
 
-      /* ═══════════ The team ═══════════ */
+      /* ═══════════ The band (/team/) ═══════════ */
       ['Conhece a equipa do Club Benares: os profissionais por trás da produtora de cinema, com os seus portfolios.',
         'Meet the Club Benares team: the professionals behind the film production company, with their portfolios.',
         'Conoce al equipo del Club Benares: los profesionales detrás de la productora de cine, con sus portfolios.'],
@@ -437,7 +437,7 @@
           return ({ pt: 'Ver detalhes: ', en: 'View details: ', es: 'Ver detalles: ' })[lang] + tr(m[1]);
       } },
       { re: /^Alugar — (.+)$/, t: ['Alugar — $1', 'Rent — $1', 'Alquilar — $1'] },
-      /* The team: "Trabalhar com Charlie →", aria-label "Conhecer Charlie Chaves" */
+      /* The band: "Trabalhar com Charlie →", aria-label "Conhecer Charlie Chaves" */
       { re: /^Trabalhar com (.+?)( →)?$/, t: ['Trabalhar com $1$2', 'Work with $1$2', 'Trabajar con $1$2'] },
       { re: /^Conhecer (.+)$/, t: ['Conhecer $1', 'Meet $1', 'Conocer a $1'] },
       /* Fechas: "11 Dez 2024", "Out 2026", "Dez" */
@@ -454,7 +454,7 @@
       // marca y secciones
       'Charlie Chaves', 'Charlie', 'Chaves', 'The Benares Club', 'Club Benares', '© 2026 Club Benares.', '.KO', 'PT', 'EN', 'ES',
       'Instagram', 'Email', 'Newsletter', 'Newsletter!', 'MB Way', 'PayPal', 'Subtotal', 'Total', 'Stripe', 'Drama', 'Portugal', 'Suspense',
-      'Bio', 'Blog', 'Cine Club', 'Daily Life', 'Editorial', 'Workshop', 'The team', 'Portfolio', 'Networking', 'Festival', 'Film Festivals',
+      'Bio', 'Blog', 'Cine Club', 'Daily Life', 'Editorial', 'Workshop', 'The band', 'Portfolio', 'Networking', 'Festival', 'Film Festivals',
       'Join the Club', 'Open Call', 'Crowdfunding', 'Feedback',
       '.KO Lisboa', 'International Short-film Championship', 'Final Championship',
       'Lisbon International Short-film Championship', 'Cooking in progress',

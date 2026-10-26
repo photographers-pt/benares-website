@@ -19,7 +19,7 @@ function createHeader() {
         vertical-align: middle;
       }
 
-      /* "THE TEAM" stands out in the menu (the text itself stays "The team") */
+      /* "THE BAND" stands out in the menu (the text itself stays "The band") */
       nav a[href="/team/"] { text-transform: uppercase; }
       @media (min-width: 769px) { nav a[href="/team/"] { letter-spacing: 0.06em; } }
     </style>
@@ -47,7 +47,7 @@ function createHeader() {
         <li><a href="/eventos/">Eventos</a></li>
         <li><a href="/cinemateca/">Cinemateca</a></li>
         <li><a href="/fototeca/">Fototeca</a></li>
-        <li><a href="/team/">The team</a></li>
+        <li><a href="/team/">The band</a></li>
         <li><a href="/contactos/">Contactos</a></li>
       </ul>
     </nav>

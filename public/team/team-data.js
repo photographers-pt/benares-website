@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════
-   THE TEAM: one entry per person. The grid at /team/ and every profile page are built from this list.
+   THE BAND (/team/): one entry per person. The grid at /team/ and every profile page are built from this list.
 
    Everyone listed here appears by name (no roles) in the list on the left of /team/ and gets a square frame
    in the grid, empty until there is a photo. A person grows in steps:
