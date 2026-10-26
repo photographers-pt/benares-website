@@ -90,10 +90,6 @@
       border-radius: var(--radius-md);
     }
 
-    .newsletter-block .section-label {
-      margin-bottom: 0.5rem;
-    }
-
     .newsletter-heading {
       font-family: var(--font-family);
       font-size: clamp(1.2rem, 2.5vw, 1.7rem);
@@ -101,15 +97,7 @@
       letter-spacing: 0.05em;
       text-transform: uppercase;
       color: var(--text-primary);
-      margin: 0 0 0.6rem;
-    }
-
-    .newsletter-desc {
-      font-size: 0.88rem;
-      line-height: 1.65;
-      color: var(--text-muted);
-      max-width: 520px;
-      margin: 0 0 1.75rem;
+      margin: 0 0 1.5rem;
     }
 
     .newsletter-form {
@@ -160,13 +148,6 @@
       text-transform: uppercase;
       color: var(--text-muted);
       margin-top: 1rem;
-    }
-
-    .newsletter-note {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      opacity: 0.5;
-      margin-top: 0.85rem;
     }
 
     @media (max-width: 480px) {
@@ -233,15 +214,7 @@
 
       <!-- Newsletter -->
       <div class="newsletter-block">
-        <p class="section-label">Newsletter</p>
-        <h2 class="newsletter-heading">
-          <span data-lang="pt">Fica a par de tudo</span>
-          <span data-lang="en">Stay in the loop</span>
-          <span data-lang="es">Mantente al día</span>
-        </h2>
-        <p class="newsletter-desc" data-lang="pt">Novos filmes, eventos e chamadas abertas diretamente no teu email. Sem spam.</p>
-        <p class="newsletter-desc" data-lang="en">New films, events and open calls straight to your inbox. No spam.</p>
-        <p class="newsletter-desc" data-lang="es">Nuevas películas, eventos y convocatorias directo a tu email. Sin spam.</p>
+        <h2 class="newsletter-heading">Newsletter!</h2>
         <form class="newsletter-form" id="newsletter-form" novalidate>
           <input
             class="newsletter-input"
@@ -264,9 +237,6 @@
           <span data-lang="en">✓ Subscribed! Thank you.</span>
           <span data-lang="es">✓ ¡Suscrito! Gracias.</span>
         </p>
-        <p class="newsletter-note" data-lang="pt">Podes cancelar a qualquer momento.</p>
-        <p class="newsletter-note" data-lang="en">You can unsubscribe at any time.</p>
-        <p class="newsletter-note" data-lang="es">Puedes darte de baja en cualquier momento.</p>
       </div>
 
     </section>
