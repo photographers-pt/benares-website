@@ -301,6 +301,9 @@
       ['Estamos a preparar os próximos eventos.',
         'We are preparing the upcoming events.',
         'Estamos preparando los próximos eventos.'],
+      ['Uma noite de Night Lounge dedicada às curtas-metragens do público. Vamos ver os filmes juntos.',
+        'A Night Lounge evening dedicated to short films from the audience. We’ll watch the films together.',
+        'Una noche de Night Lounge dedicada a los cortometrajes del público. Veremos las películas juntos.'],
       ['A primeira sessão do Night Lounge reúne as mais recentes curtas-metragens produzidas pelos membros do The Benares Club. Uma noite de estreias, conversa com os realizadores e muito cinema independente. Portas abertas às 19:30.',
         'The first Night Lounge session brings together the latest short films produced by members of The Benares Club. A night of premieres, conversations with the filmmakers and plenty of independent cinema. Doors open at 19:30.',
         'La primera sesión del Night Lounge reúne los cortometrajes más recientes producidos por los miembros de The Benares Club. Una noche de estrenos, charla con los realizadores y mucho cine independiente. Puertas abiertas a las 19:30.'],
@@ -443,7 +446,7 @@
       // títulos de películas, eventos y productos
       'Inexistente', 'El Artista Comprendido', 'El Profesor', 'Jay Gupta', 'Firefly', 'Sinestesia', 'Dimensão S2',
       'A Especialidade da Casa', 'Nos Bastidores', 'A Cor da Memória', 'Onde Cabem Todos',
-      'Night Lounge #1', 'Night Lounge #2', 'Night Lounge #3', 'MashUp #1', 'MashUp #2', 'MashUp #3', 'MashUp #4', 'MashUp #5',
+      'Night Lounge #1', 'Night Lounge #2', 'Night Lounge #3', 'Night Lounge #4', 'Cossoul', 'MashUp #1', 'MashUp #2', 'MashUp #3', 'MashUp #4', 'MashUp #5',
       'Tote Bag Club Benares', 'Zine #1', 'FestIn', 'DocLisboa', 'Madalena M.', 'Terreiro do Paço',
       'Gastón Duprat & Mariano Cohn', 'Competencia oficial', 'El ciudadano ilustre', 'Mi obra maestra', 'El hombre de al lado', 'El artista',
       'Duprat · Cohn', '"La cabeza te da, la cabeza sí te da... lo que no te da es el corazón."', '— Guillermo Francella · Corazón de León (2013)',
