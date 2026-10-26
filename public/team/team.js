@@ -28,7 +28,7 @@
       ${person
         ? `<a class="tm-title" href="/team/">The band</a>`
         : `<h1 class="tm-title">The band</h1>
-           <p class="tm-lead">O Club Benares nasceu em 2023 como coletivo de cinema independente e dá agora os primeiros passos como produtora. Esta é a equipa: profissionais de áreas diferentes que trabalham juntos, em Lisboa, para pôr histórias em imagem.</p>`}
+           <p class="tm-lead">O nosso coletivo de cinema está a dar os primeiros passos como produtora. Esta é a equipa: profissionais de áreas diferentes que trabalham juntos, em Lisboa, para pôr histórias em imagem.</p>`}
     </div>`;
   const names = `
     <div class="tm-roll">
