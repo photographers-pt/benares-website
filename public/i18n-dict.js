@@ -268,6 +268,22 @@
         'Got a project, or want to join the team? Get in touch.',
         '¿Tienes un proyecto o quieres unirte al equipo? Escríbenos.'],
       ['Entrar em contacto →', 'Get in touch →', 'Ponte en contacto →'],
+      ['A alineação', 'The lineup', 'La alineación'],
+      ['Ver a alineação', 'See the lineup', 'Ver la alineación'],
+      ['Escolhe um nome e conhece a sua história.', 'Pick a name and discover their story.', 'Elige un nombre y conoce su historia.'],
+      ['Ver apresentação', 'Watch the presentation', 'Ver presentación'],
+      ['Parar apresentação', 'Stop the presentation', 'Detener presentación'],
+      ['Banco', 'Bench', 'Banquillo'],
+      ['A tua vez', 'Your turn', 'Tu turno'],
+      ['Junta-te à equipa', 'Join the team', 'Únete al equipo'],
+      ['Com o Club Benares', 'With Club Benares', 'Con el Club Benares'],
+      ['Desde', 'Since', 'Desde'],
+      ['Modo demo: pré-visualização com 11 perfis de exemplo.',
+        'Demo mode: preview with 11 sample profiles.',
+        'Modo demo: vista previa con 11 perfiles de ejemplo.'],
+      ['Aqui entra a biografia: duas a quatro frases sobre quem é, o que faz e porque o seu trabalho conta.',
+        'The biography goes here: two to four sentences about who they are, what they do and why their work matters.',
+        'Aquí va la biografía: dos a cuatro frases sobre quién es, qué hace y por qué importa su trabajo.'],
 
       /* ═══════════ Comunidad (.KO) — textos en inglés a propósito en PT ═══════════ */
       ['The Benares Club presents', 'The Benares Club presents', 'The Benares Club presenta'],
@@ -416,6 +432,9 @@
           return ({ pt: 'Ver detalhes: ', en: 'View details: ', es: 'Ver detalles: ' })[lang] + tr(m[1]);
       } },
       { re: /^Alugar — (.+)$/, t: ['Alugar — $1', 'Rent — $1', 'Alquilar — $1'] },
+      /* The team: "Trabalhar com Charlie →", aria-label "Conhecer Charlie Chaves" */
+      { re: /^Trabalhar com (.+?)( →)?$/, t: ['Trabalhar com $1$2', 'Work with $1$2', 'Trabajar con $1$2'] },
+      { re: /^Conhecer (.+)$/, t: ['Conhecer $1', 'Meet $1', 'Conocer a $1'] },
       /* Fechas: "11 Dez 2024", "Out 2026", "Dez" */
       { re: new RegExp('^(?:(\\d{1,2}) )?(' + MONTH_RE + ')(?: (\\d{4}))?$'), fn: function (m, lang) {
           return (m[1] ? m[1] + ' ' : '') + monthTo(m[2], lang) + (m[3] ? ' ' + m[3] : '');
@@ -444,6 +463,9 @@
       // personas y lugares
       'Charlie Chaves', 'Valdir Neves', 'Val Neves', 'Nityam', 'João Nobre', 'Alessandro Barboza', 'Pedro Antonie de Saint', 'Gonçalo Pereira',
       'Carlos Calderon', 'Bruno de Franclieu', 'Fabio Duarte', 'Inês Serra', 'Cinema São Jorge', 'Cinema Ideal', 'ETIC', 'Bar Tejo', 'Teatro São Luiz',
+      // /team/?demo (perfiles de exemplo)
+      'Ana Exemplo', 'Rui Exemplo', 'Eva Exemplo', 'Leo Exemplo', 'Ivo Exemplo', 'Bia Exemplo', 'Teo Exemplo', 'Lia Exemplo', 'Dani Exemplo', 'Zé Exemplo',
+      'Ana', 'Rui', 'Eva', 'Leo', 'Ivo', 'Bia', 'Teo', 'Lia', 'Dani', 'Zé', 'Exemplo',
       'Ana', 'Silva', 'Apt 3B', 'S', 'M', 'L', 'XL',
       'Rasmus', 'Akshay Tharabole', 'Nilesh Suryawanshi', 'Varsha Mehra', 'Yacine Meziti', 'Francisco Lopes',
       'Giovanna Domiciano Neto', 'Rita Primavera Lopes Família', 'Sinou Gomez', 'Nikolas Serra', 'Rafaela Sousa',
