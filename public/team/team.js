@@ -1,4 +1,4 @@
-/* Builds /team/ (names list + portrait grid) and every /team/<id>/ profile from window.TEAM (see team-data.js). */
+/* Builds /team/ (names list + portrait frames) and every /team/<id>/ profile from window.TEAM (see team-data.js). */
 (() => {
   "use strict";
   const root = document.getElementById("tm");
@@ -8,10 +8,7 @@
   const first = n => n.trim().split(/\s+/)[0];
   const EMAIL = window.CLUB_EMAIL;
 
-  /* /team/?demo → adds sample portraits so you can see a fuller grid (they have no page of their own) */
-  const DEMO = /[?&]demo(?:=|&|$)/.test(location.search);
-  const sample = ["Ana", "Rui", "Eva", "Leo", "Ivo"].map(f => ({ demo: true, name: f + " Exemplo" }));
-  const TEAM = DEMO ? window.TEAM.concat(sample) : window.TEAM.slice();
+  const TEAM = window.TEAM;
 
   const hasPage = m => !!(m.id && m.bio);
   const current = document.documentElement.dataset.member || "";
@@ -39,14 +36,7 @@
       <ul class="tm-names">${roll}</ul>
     </div>`;
 
-  const cta = `
-    <section class="tm-cta">
-      <h2>Vamos fazer um filme juntos?</h2>
-      <p>Tens um projeto ou queres juntar-te à equipa? Fala connosco.</p>
-      <a class="tm-btn" href="/contactos/">Entrar em contacto →</a>
-    </section>`;
-
-  /* ── the grid: only people with a photo (or the demo samples) ── */
+  /* ── the grid: everyone gets a frame; it stays empty until their photo is added ── */
   const tile = (m, i) => {
     const body = `<span class="tile-img">${photo(m)}</span><span class="tile-name">${esc(m.name)}</span>${m.tag ? `<span class="tile-tag">${esc(m.tag)}</span>` : ""}`;
     return `<li style="--i:${i}">${hasPage(m)
@@ -60,13 +50,10 @@
         <span class="tile-name">A tua vez</span><span class="tile-tag">Junta-te à equipa</span>
       </a>
     </li>`;
-  const grid = () => {
-    const shown = TEAM.filter(m => m.photo || m.demo);
-    return `
+  const grid = () => `
     <div class="tm-main">
-      <ul class="tm-grid">${shown.map(tile).join("")}${invite(shown.length)}</ul>
-    </div>` + cta;
-  };
+      <ul class="tm-grid">${TEAM.map(tile).join("")}${invite(TEAM.length)}</ul>
+    </div>`;
 
   /* ── a profile ── */
   const profile = m => {
@@ -98,18 +85,11 @@
   };
 
   /* left and right columns on desktop; on a phone the pieces simply stack in this order:
-     title+intro → portraits → names → contact */
+     title+intro → portraits → names */
   root.innerHTML = `<div class="tm-left">${head}${names}</div><div class="tm-right">${person ? profile(person) : grid()}</div>`;
 
   /* the left column stays in view while you scroll, but only if it fits on the screen */
   const left = root.querySelector(".tm-left");
   const fit = () => left.classList.toggle("is-sticky", left.scrollHeight < innerHeight - 190);
   fit(); addEventListener("resize", fit); addEventListener("load", fit);
-
-  if (DEMO) {
-    const b = document.createElement("div");
-    b.className = "demo-badge";
-    b.textContent = "Modo demo: pré-visualização com perfis de exemplo.";
-    document.body.appendChild(b);
-  }
 })();

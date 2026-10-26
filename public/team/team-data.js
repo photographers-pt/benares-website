@@ -1,9 +1,10 @@
 /* ═══════════════════════════════════════════════════════════════════════
    THE TEAM: one entry per person. The grid at /team/ and every profile page are built from this list.
 
-   Everyone listed here appears by name (no roles) in the list on the left of /team/. A person grows in steps:
-     · name only        { name: "Ana Silva" }                     → just the name in the list
-     · + photo          add  photo: "/path.jpg"                   → also a square portrait in the grid
+   Everyone listed here appears by name (no roles) in the list on the left of /team/ and gets a square frame
+   in the grid, empty until there is a photo. A person grows in steps:
+     · name only        { name: "Ana Silva" }                     → name + empty frame
+     · + photo          add  photo: "/path.jpg"                   → the frame shows a black-and-white portrait
      · + profile page   add  id, bio (+ the optional fields)      → the portrait and the name link to /team/<id>/
    TO GIVE SOMEONE A PROFILE PAGE
      1. Fill in their block as the one for Charlie below. The order here is the order on the page.
@@ -11,7 +12,6 @@
         index.html: data-member="<id>", the <title> and the description.
      3. Add each new sentence to /i18n-dict.js as [pt, en, es] so it also shows in English and Spanish.
      New names also go in the "keep" list of /i18n-dict.js (names are never translated).
-   Open /team/?demo to see how the grid looks with more portraits.
 
    id         the folder / URL slug, lowercase, no spaces:  /team/<id>/
    name       full name
@@ -33,7 +33,6 @@ window.TEAM = [
   {
     id: "charlie",
     name: "Charlie Chaves",
-    tag: "Escritor e Realizador",
     role: "Escritor e Realizador · Produtor Audiovisual · Fundador",
     photo: "/Imagenes/Charlie%20Portfolio/Charlie%20Portrait%20%231.jpg",
     photoPos: "16% center",
