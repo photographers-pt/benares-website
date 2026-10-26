@@ -320,6 +320,9 @@
       ['Entrada livre', 'Free entry', 'Entrada libre'],
       ['Mesa', 'Table', 'Mesa'],
       ['Reservar no Eventbrite', 'Book on Eventbrite', 'Reservar en Eventbrite'],
+      ['Submeter a tua curta-metragem', 'Submit your short film', 'Envía tu cortometraje'],
+      ['Submeter curta', 'Submit a short', 'Enviar corto'],
+      ['brevemente', 'soon', 'pronto'],
       ['Inscrever no Eventbrite', 'Sign up on Eventbrite', 'Inscribirse en Eventbrite'],
       ['Confirmar presença no Meetup', 'RSVP on Meetup', 'Confirmar asistencia en Meetup'],
       ['Garantir mesa no Eventbrite', 'Reserve a table on Eventbrite', 'Reservar mesa en Eventbrite'],
@@ -446,7 +449,7 @@
       // títulos de películas, eventos y productos
       'Inexistente', 'El Artista Comprendido', 'El Profesor', 'Jay Gupta', 'Firefly', 'Sinestesia', 'Dimensão S2',
       'A Especialidade da Casa', 'Nos Bastidores', 'A Cor da Memória', 'Onde Cabem Todos',
-      'Night Lounge #1', 'Night Lounge #2', 'Night Lounge #3', 'Night Lounge #4', 'Cossoul', 'R. Nova da Piedade 66, 1200-299 Lisboa', 'MashUp #1', 'MashUp #2', 'MashUp #3', 'MashUp #4', 'MashUp #5',
+      'Night Lounge #1', 'Night Lounge #2', 'Night Lounge #3', 'Night Lounge #4', 'Meetup', 'Eventbrite', 'Cossoul', 'R. Nova da Piedade 66, 1200-299 Lisboa', 'MashUp #1', 'MashUp #2', 'MashUp #3', 'MashUp #4', 'MashUp #5',
       'Tote Bag Club Benares', 'Zine #1', 'FestIn', 'DocLisboa', 'Madalena M.', 'Terreiro do Paço',
       'Gastón Duprat & Mariano Cohn', 'Competencia oficial', 'El ciudadano ilustre', 'Mi obra maestra', 'El hombre de al lado', 'El artista',
       'Duprat · Cohn', '"La cabeza te da, la cabeza sí te da... lo que no te da es el corazón."', '— Guillermo Francella · Corazón de León (2013)',

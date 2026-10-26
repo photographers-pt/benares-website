@@ -51,7 +51,7 @@
     /* ── Event row ── */
     .event-row {
       display: grid;
-      grid-template-columns: 80px 1fr auto;
+      grid-template-columns: 80px 1fr;
       align-items: center;
       gap: 2rem;
       padding: 1.75rem 0;
@@ -151,6 +151,21 @@
       transition: background 0.2s, transform 0.15s;
     }
     .btn-ticket:hover { background: #fff; transform: translateY(-1px); }
+
+    /* Action buttons under the event (Meetup / Eventbrite / submit a short) */
+    .event-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.95rem; }
+    .event-actions .btn-ticket { padding: 0.5rem 0.95rem; font-size: 0.68rem; }
+    /* no link yet: shown, but switched off */
+    .btn-ticket.is-soon, .event-modal-cta.is-soon {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px dashed var(--border-strong);
+      cursor: default;
+    }
+    .btn-ticket.is-soon:hover, .event-modal-cta.is-soon:hover { background: transparent; transform: none; }
+    .btn-ticket.is-soon { padding: calc(0.5rem - 1px) calc(0.95rem - 1px); }
+    .event-modal-cta.is-soon { padding: calc(0.75rem - 1px) calc(1.5rem - 1px); }
+    .is-soon small { font-size: 0.56rem; font-weight: 600; letter-spacing: 0.12em; opacity: 0.75; }
 
     /* ── Event row — clickable ── */
     .event-row {
@@ -319,12 +334,12 @@
     }
     .event-modal-price strong { color: var(--text-primary); font-weight: 500; }
 
+    .event-modal-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.75rem; }
+    .event-modal-actions[hidden] { display: none; }
     .event-modal-cta {
       display: inline-flex;
       align-items: center;
       gap: 0.55rem;
-      margin-top: 0.75rem;
-      align-self: flex-start;
       font-family: var(--font-family);
       font-size: 0.75rem;
       font-weight: 600;
@@ -339,7 +354,6 @@
       transition: background 0.2s;
     }
     .event-modal-cta:hover { background: #fff; }
-    .event-modal-cta[hidden] { display: none; }
 
     /* ── Preview (eventos não confirmados) ── */
     .event-list-wrap {
@@ -417,10 +431,6 @@
         grid-template-rows: auto auto;
         gap: 1rem;
         padding: 1.5rem 0;
-      }
-      .btn-ticket {
-        grid-column: 2;
-        width: fit-content;
       }
       .event-date-day { font-size: 1.75rem; }
       .event-modal-body { padding: 1.5rem 1.25rem 2rem; }
@@ -500,10 +510,7 @@
         <hr class="event-modal-divider">
         <p id="event-modal-desc" class="event-modal-desc"></p>
         <p id="event-modal-price" class="event-modal-price"></p>
-        <a id="event-modal-cta" class="event-modal-cta" href="#" target="_blank" rel="noopener noreferrer">
-          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
-          <span id="event-modal-cta-label"></span>
-        </a>
+        <div id="event-modal-actions" class="event-modal-actions" hidden></div>
       </div>
     </div>
   </div>
@@ -532,8 +539,11 @@
      *    image:       "/media/...",        ← foto de capa (ou null)
      *    price:       "Entrada livre",     ← "Entrada livre" / "5€" / "10€ · Eventbrite"
      *    free:        true,                ← true = verde no preço
-     *    ticketUrl:   "https://www.eventbrite.com/e/...", ← link bilhetes (ou null)
-     *    ticketLabel: "Reservar no Eventbrite",           ← texto do botão
+     *    actions: [                         ← botões (aparecem na lista e no modal)
+     *      { short: "Meetup",     label: "Confirmar presença no Meetup", url: "https://www.meetup.com/..." },
+     *      { short: "Eventbrite", label: "Reservar no Eventbrite",       url: "https://www.eventbrite.com/e/..." },
+     *      { short: "Submeter curta", label: "Submeter a tua curta-metragem", url: "https://..." },
+     *    ],                                 ← url: null = botão visível mas desligado ("brevemente")
      *  }
      *
      *  Plataformas suportadas: Eventbrite, Meetup, qualquer URL externo.
@@ -553,8 +563,11 @@
         image: null,
         price: null,
         free: false,
-        ticketUrl: null,
-        ticketLabel: null,
+        actions: [
+          { short: "Meetup",         label: "Confirmar presença no Meetup",    url: null },
+          { short: "Eventbrite",     label: "Reservar no Eventbrite",          url: null },
+          { short: "Submeter curta", label: "Submeter a tua curta-metragem",   url: null },
+        ],
       },
     ];
 
@@ -563,6 +576,12 @@
      *   document.getElementById('event-list-wrap').classList.remove('preview');
      * ou simplesmente remove a classe "preview" do HTML acima.
      */
+
+    /* Botões do evento (aceita também o formato antigo: ticketUrl + ticketLabel) */
+    function getActions(ev) {
+      if (ev.actions) return ev.actions;
+      return ev.ticketUrl ? [{ short: 'Reservar', label: ev.ticketLabel || 'Reservar bilhetes', url: ev.ticketUrl }] : [];
+    }
 
     /* ── Render list ── */
     const list = document.getElementById('event-list');
@@ -597,12 +616,13 @@
                ${ev.location}
              </span>`;
 
-        const ticketEl = ev.ticketUrl
-          ? `<a class="btn-ticket" href="${ev.ticketUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">
-               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
-               Reservar
-             </a>`
-          : `<span class="event-price${ev.free ? ' free' : ''}">${ev.price || ''}</span>`;
+        const actions = getActions(ev);
+        const actionsEl = actions.length
+          ? `<div class="event-actions">${actions.map(a => a.url
+              ? `<a class="btn-ticket" href="${a.url}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${a.short || a.label}</a>`
+              : `<span class="btn-ticket is-soon" aria-disabled="true"><span>${a.short || a.label}</span><small>brevemente</small></span>`).join('')}</div>`
+          : '';
+        const priceEl = ev.price ? `<span class="event-price${ev.free ? ' free' : ''}">${ev.price}</span>` : '';
 
         row.innerHTML = `
           <div class="event-date">
@@ -618,13 +638,14 @@
                 ${ev.time}
               </span>
               ${locationEl}
+              ${priceEl}
             </div>
+            ${actionsEl}
           </div>
-          ${ticketEl}
         `;
 
         row.addEventListener('click', () => openEventModal(ev));
-        row.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') openEventModal(ev); });
+        row.addEventListener('keydown', e => { if (e.target === row && (e.key === 'Enter' || e.key === ' ')) openEventModal(ev); });
         list.appendChild(row);
       });
     }
@@ -641,8 +662,7 @@
       const location = document.getElementById('event-modal-location');
       const desc     = document.getElementById('event-modal-desc');
       const price    = document.getElementById('event-modal-price');
-      const cta      = document.getElementById('event-modal-cta');
-      const ctaLabel = document.getElementById('event-modal-cta-label');
+      const actionsBox = document.getElementById('event-modal-actions');
 
       if (ev.image) {
         img.src = ev.image;
@@ -672,13 +692,11 @@
         price.style.display = 'none';
       }
 
-      if (ev.ticketUrl) {
-        cta.href = ev.ticketUrl;
-        ctaLabel.textContent = ev.ticketLabel || 'Reservar bilhetes';
-        cta.removeAttribute('hidden');
-      } else {
-        cta.setAttribute('hidden', '');
-      }
+      const actions = getActions(ev);
+      actionsBox.innerHTML = actions.map(a => a.url
+        ? `<a class="event-modal-cta" href="${a.url}" target="_blank" rel="noopener noreferrer">${a.label}</a>`
+        : `<span class="event-modal-cta is-soon" aria-disabled="true"><span>${a.label}</span><small>brevemente</small></span>`).join('');
+      actionsBox.hidden = actions.length === 0;
 
       modal.removeAttribute('hidden');
       document.body.style.overflow = 'hidden';
