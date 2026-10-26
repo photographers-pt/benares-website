@@ -81,6 +81,53 @@
       word-break: break-all;
     }
 
+    /* Collaborations: the first thing on the page */
+    .collab-block {
+      margin-bottom: 1.25rem;
+      padding: 2.25rem 2rem;
+      background: rgba(255,248,238,0.07);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+    }
+    .collab-block .section-label { margin-bottom: 0.6rem; }
+    .collab-heading {
+      font-family: var(--font-serif);
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      line-height: 0.95;
+      color: var(--text-primary);
+      margin: 0 0 0.9rem;
+    }
+    .collab-text {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      max-width: 520px;
+      margin: 0 0 1.6rem;
+    }
+    .collab-actions { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+    .collab-btn {
+      display: inline-flex;
+      align-items: center;
+      font-family: var(--font-family);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: #000;
+      background: var(--text-primary);
+      border: 1px solid var(--text-primary);
+      border-radius: 4px;
+      padding: 0.85rem 1.5rem;
+      transition: opacity 0.2s, background 0.2s, border-color 0.2s;
+    }
+    .collab-btn:hover { opacity: 0.85; }
+    .collab-btn--ghost { background: transparent; color: var(--text-primary); border-color: rgba(240,232,216,0.4); }
+    .collab-btn--ghost:hover { opacity: 1; background: rgba(255,248,238,0.07); border-color: rgba(240,232,216,0.8); }
+
     /* Newsletter */
     .newsletter-block {
       margin-top: 4rem;
@@ -159,6 +206,8 @@
         grid-template-columns: 1fr;
       }
 
+      .collab-block { padding: 1.75rem 1.25rem; }
+      .collab-btn { width: 100%; justify-content: center; }
       .newsletter-form { flex-direction: column; }
       .newsletter-btn  { width: 100%; }
     }
@@ -184,6 +233,17 @@
     </div>
   </div>
     <section class="contactos-section">
+
+      <!-- Collaborations -->
+      <div class="collab-block">
+        <p class="section-label">Colaborações</p>
+        <h2 class="collab-heading">Vamos produzir juntos</h2>
+        <p class="collab-text">Produzimos as nossas próprias curtas e estamos abertos a coproduzir com outras equipas.</p>
+        <div class="collab-actions">
+          <a class="collab-btn" href="https://forms.gle/vkaw7RfY7TGzcLM59" target="_blank" rel="noopener noreferrer">Enviar proposta →</a>
+          <a class="collab-btn collab-btn--ghost" href="mailto:charlie@thebenaresclub.com?subject=Vamos%20produzir%20juntos">Escrever email →</a>
+        </div>
+      </div>
 
       <div class="contacts-grid">
 
