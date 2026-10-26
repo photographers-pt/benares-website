@@ -1,17 +1,22 @@
 /* ═══════════════════════════════════════════════════════════════════════
    THE TEAM: one entry per person. The grid at /team/ and every profile page are built from this list.
 
-   TO ADD A PERSON
-     1. Copy the { … } block below and fill it in (the order here is the order on the page).
+   Everyone listed here appears by name (no roles) in the list on the left of /team/. A person grows in steps:
+     · name only        { name: "Ana Silva" }                     → just the name in the list
+     · + photo          add  photo: "/path.jpg"                   → also a square portrait in the grid
+     · + profile page   add  id, bio (+ the optional fields)      → the portrait and the name link to /team/<id>/
+   TO GIVE SOMEONE A PROFILE PAGE
+     1. Fill in their block as the one for Charlie below. The order here is the order on the page.
      2. Copy the folder  public/team/charlie/  to  public/team/<id>/  and change three things in its
         index.html: data-member="<id>", the <title> and the description.
      3. Add each new sentence to /i18n-dict.js as [pt, en, es] so it also shows in English and Spanish.
-   Open /team/?demo to see how the grid looks with more people.
+     New names also go in the "keep" list of /i18n-dict.js (names are never translated).
+   Open /team/?demo to see how the grid looks with more portraits.
 
    id         the folder / URL slug, lowercase, no spaces:  /team/<id>/
    name       full name
-   tag        short role, shown under the name in the grid
-   role       full role line on the profile page (separate roles with " · ")
+   tag        optional short line under the name in the grid (e.g. a role). Leave out to show only the name
+   role       optional line above the name on the profile page
    photo      portrait photo. Square crops in the grid, 4:5 on the profile; any size ≥ 900px works
    photoPos   optional crop focus when the photo is wide, e.g. "20% center"
    bio        2–4 sentences
@@ -24,6 +29,7 @@
 window.CLUB_EMAIL = "charlie@thebenaresclub.com";
 
 window.TEAM = [
+  { name: "Valdir Neves" },
   {
     id: "charlie",
     name: "Charlie Chaves",
@@ -42,5 +48,20 @@ window.TEAM = [
     ],
     portfolio: "/charlie/home/",
     instagram: "https://www.instagram.com/CharlieChaves14"
-  }
+  },
+  { name: "Giovanna Domiciano Neto" },
+  { name: "Rita Primavera Lopes Família" },
+  { name: "Sinou Gomez" },
+  { name: "Nikolas Serra" },
+  { name: "Rafaela Sousa" },
+  { name: "Inês Garcias Lopes" },
+  { name: "Sofia Aragão" },
+  { name: "Sara Silva Veiga" },
+  { name: "Jiani Shi" },
+  { name: "Xihe Yu" },
+  { name: "André de Brito" },
+  { name: "Dylan Cabanis" },
+  { name: "Marta Taborda" },
+  { name: "Leonor Canas" },
+  { name: "João Guilherme Gouveia" }
 ];

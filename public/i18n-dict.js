@@ -456,6 +456,10 @@
       // personas y lugares
       'Charlie Chaves', 'Valdir Neves', 'Val Neves', 'Nityam', 'João Nobre', 'Alessandro Barboza', 'Pedro Antonie de Saint', 'Gonçalo Pereira',
       'Carlos Calderon', 'Bruno de Franclieu', 'Fabio Duarte', 'Inês Serra', 'Cinema São Jorge', 'Cinema Ideal', 'ETIC', 'Bar Tejo', 'Teatro São Luiz',
+      // /team: equipa do Firefly
+      'Giovanna Domiciano Neto', 'Rita Primavera Lopes Família', 'Sinou Gomez', 'Nikolas Serra', 'Rafaela Sousa', 'Inês Garcias Lopes',
+      'Sofia Aragão', 'Sara Silva Veiga', 'Jiani Shi', 'Xihe Yu', 'André de Brito', 'Dylan Cabanis', 'Marta Taborda', 'Leonor Canas',
+      'João Guilherme Gouveia',
       // /team/?demo (perfiles de exemplo)
       'Ana Exemplo', 'Rui Exemplo', 'Eva Exemplo', 'Leo Exemplo', 'Ivo Exemplo',
       'Ana', 'Silva', 'Apt 3B', 'S', 'M', 'L', 'XL',

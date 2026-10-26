@@ -1,4 +1,4 @@
-/* Builds /team/ (the grid) and every /team/<id>/ profile from window.TEAM (see team-data.js). */
+/* Builds /team/ (names list + portrait grid) and every /team/<id>/ profile from window.TEAM (see team-data.js). */
 (() => {
   "use strict";
   const root = document.getElementById("tm");
@@ -8,35 +8,36 @@
   const first = n => n.trim().split(/\s+/)[0];
   const EMAIL = window.CLUB_EMAIL;
 
-  /* /team/?demo → adds sample profiles so you can see a fuller grid (they have no page of their own) */
+  /* /team/?demo → adds sample portraits so you can see a fuller grid (they have no page of their own) */
   const DEMO = /[?&]demo(?:=|&|$)/.test(location.search);
-  const sample = [["Ana", "Realização"], ["Rui", "Produção"], ["Eva", "Direção de Fotografia"], ["Leo", "Montagem"], ["Ivo", "Som"]]
-    .map(([f, tag]) => ({ demo: true, name: f + " Exemplo", tag, photo: null }));
+  const sample = ["Ana", "Rui", "Eva", "Leo", "Ivo"].map(f => ({ demo: true, name: f + " Exemplo" }));
   const TEAM = DEMO ? window.TEAM.concat(sample) : window.TEAM.slice();
 
+  const hasPage = m => !!(m.id && m.bio);
   const current = document.documentElement.dataset.member || "";
-  const person = TEAM.find(m => m.id === current);
+  const person = TEAM.find(m => hasPage(m) && m.id === current);
   if (current && !person) { location.replace("/team/"); return; }
 
   const photo = m => m.photo
     ? `<img src="${esc(m.photo)}" alt="${esc(m.name)}"${m.photoPos ? ` style="object-position:${esc(m.photoPos)}"` : ""}>`
     : `<img class="ph" src="/icon-192.png" alt="">`;
 
-  /* ── left column: title, intro (grid only) and the list of names ── */
-  const names = TEAM.map(m => m.demo
-    ? `<li><span>${esc(m.name)}</span></li>`
-    : `<li><a href="/team/${esc(m.id)}/"${m.id === current ? ' aria-current="page"' : ""}>${esc(m.name)}</a></li>`).join("");
-  const side = `
-    <aside class="tm-side">
+  /* ── left column: title, intro (grid page only) and the list of everyone, by name ── */
+  const roll = TEAM.map(m => hasPage(m)
+    ? `<li><a href="/team/${esc(m.id)}/"${m.id === current ? ' aria-current="page"' : ""}>${esc(m.name)}</a></li>`
+    : `<li><span>${esc(m.name)}</span></li>`).join("");
+  const head = `
+    <div class="tm-side">
       ${person
         ? `<a class="tm-title" href="/team/">The team</a>`
         : `<h1 class="tm-title">The team</h1>
            <p class="tm-lead">O Club Benares nasceu em 2023 como coletivo de cinema independente e dá agora os primeiros passos como produtora. Esta é a equipa: profissionais de áreas diferentes que trabalham juntos, em Lisboa, para pôr histórias em imagem.</p>`}
-      <div class="tm-names-wrap">
-        <span class="tm-label">Equipa</span>
-        <ul class="tm-names">${names}</ul>
-      </div>
-    </aside>`;
+    </div>`;
+  const names = `
+    <div class="tm-roll">
+      <span class="tm-label">Equipa</span>
+      <ul class="tm-names">${roll}</ul>
+    </div>`;
 
   const cta = `
     <section class="tm-cta">
@@ -45,12 +46,12 @@
       <a class="tm-btn" href="/contactos/">Entrar em contacto →</a>
     </section>`;
 
-  /* ── the grid ── */
+  /* ── the grid: only people with a photo (or the demo samples) ── */
   const tile = (m, i) => {
-    const body = `<span class="tile-img">${photo(m)}</span><span class="tile-name">${esc(m.name)}</span><span class="tile-tag">${esc(m.tag || "")}</span>`;
-    return `<li style="--i:${i}">${m.demo
-      ? `<div class="tile">${body}</div>`
-      : `<a class="tile" href="/team/${esc(m.id)}/" aria-label="Conhecer ${esc(m.name)}">${body}</a>`}</li>`;
+    const body = `<span class="tile-img">${photo(m)}</span><span class="tile-name">${esc(m.name)}</span>${m.tag ? `<span class="tile-tag">${esc(m.tag)}</span>` : ""}`;
+    return `<li style="--i:${i}">${hasPage(m)
+      ? `<a class="tile" href="/team/${esc(m.id)}/" aria-label="Conhecer ${esc(m.name)}">${body}</a>`
+      : `<div class="tile">${body}</div>`}</li>`;
   };
   const invite = i => `
     <li style="--i:${i}">
@@ -59,11 +60,13 @@
         <span class="tile-name">A tua vez</span><span class="tile-tag">Junta-te à equipa</span>
       </a>
     </li>`;
-  const grid = () => `
+  const grid = () => {
+    const shown = TEAM.filter(m => m.photo || m.demo);
+    return `
     <div class="tm-main">
-      <ul class="tm-grid">${TEAM.map(tile).join("")}${invite(TEAM.length)}</ul>
-      ${cta}
-    </div>`;
+      <ul class="tm-grid">${shown.map(tile).join("")}${invite(shown.length)}</ul>
+    </div>` + cta;
+  };
 
   /* ── a profile ── */
   const profile = m => {
@@ -79,7 +82,7 @@
       <div class="mp-top">
         <figure class="mp-photo">${photo(m)}</figure>
         <div class="mp-info">
-          <p class="mp-role">${esc(m.role)}</p>
+          ${m.role ? `<p class="mp-role">${esc(m.role)}</p>` : ""}
           <h1 class="mp-name">${esc(m.name)}</h1>
           <p class="mp-bio">${esc(m.bio)}</p>
           ${stats}
@@ -94,7 +97,14 @@
     </article>`;
   };
 
-  root.innerHTML = side + (person ? profile(person) : grid());
+  /* left and right columns on desktop; on a phone the pieces simply stack in this order:
+     title+intro → portraits → names → contact */
+  root.innerHTML = `<div class="tm-left">${head}${names}</div><div class="tm-right">${person ? profile(person) : grid()}</div>`;
+
+  /* the left column stays in view while you scroll, but only if it fits on the screen */
+  const left = root.querySelector(".tm-left");
+  const fit = () => left.classList.toggle("is-sticky", left.scrollHeight < innerHeight - 190);
+  fit(); addEventListener("resize", fit); addEventListener("load", fit);
 
   if (DEMO) {
     const b = document.createElement("div");
