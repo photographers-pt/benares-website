@@ -453,7 +453,7 @@
     keep: [
       // marca y secciones
       'Charlie Chaves', 'Charlie', 'Chaves', 'The Benares Club', 'Club Benares', '© 2026 Club Benares.', '.KO', 'PT', 'EN', 'ES',
-      'Instagram', 'Email', 'Newsletter', 'Newsletter!', 'MB Way', 'PayPal', 'Subtotal', 'Total', 'Stripe', 'Drama', 'Portugal', 'Suspense',
+      'Instagram', 'YouTube', 'Email', 'Newsletter', 'Newsletter!', 'MB Way', 'PayPal', 'Subtotal', 'Total', 'Stripe', 'Drama', 'Portugal', 'Suspense',
       'Bio', 'Blog', 'Cine Club', 'Daily Life', 'Editorial', 'Workshop', 'The band', 'Portfolio', 'Networking', 'Festival', 'Film Festivals',
       'Join the Club', 'Open Call', 'Crowdfunding', 'Feedback',
       '.KO Lisboa', 'International Short-film Championship', 'Final Championship',
