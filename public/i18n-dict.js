@@ -264,6 +264,8 @@
         'He grew up in Guatemala and moved to Lisbon at 18, where he began studying Audiovisual Production at ETIC. In 2023 he brought together a group of friends with the same desire to film and founded Club Benares, an independent film collective that has, over time, become a community open to everyone who loves cinema. Writing and directing is his greatest passion.',
         'Creció en Guatemala y se mudó a Lisboa a los 18 años, donde empezó a estudiar Producción Audiovisual en la ETIC. En 2023 reunió a un grupo de amigos con las mismas ganas de filmar y fundó el Club Benares, un colectivo de cine independiente que con el tiempo se convirtió en una comunidad abierta a todos los que aman el cine. Escribir y dirigir es su mayor pasión.'],
       ['Equipa', 'Team', 'Equipo'],
+      ['Vamos produzir juntos →', 'Let’s produce together →', 'Produzcamos juntos →'],
+      ['Projetos, colaborações e coproduções.', 'Projects, collaborations and co-productions.', 'Proyectos, colaboraciones y coproducciones.'],
       ['Voltar', 'Back', 'Volver'],
       ['A tua vez', 'Your turn', 'Tu turno'],
       ['Junta-te à equipa', 'Join the team', 'Únete al equipo'],

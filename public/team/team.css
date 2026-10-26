@@ -27,6 +27,8 @@
 }
 .tm-names a { color: var(--text-primary); }
 .tm-names a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.tm-collab { display: flex; justify-content: center; margin-top: 1.8rem; text-align: center; }
+.tm-collab-note { margin: .7rem 0 0; font-family: var(--mono); font-size: .66rem; letter-spacing: .06em; line-height: 1.6; text-transform: uppercase; color: var(--text-secondary); }
 .tm-names [aria-current] { color: var(--text-primary); text-decoration: underline; text-underline-offset: 4px; }
 
 /* ── the grid ── */

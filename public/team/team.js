@@ -34,6 +34,8 @@
     <div class="tm-roll">
       <span class="tm-label">Equipa</span>
       <ul class="tm-names">${roll}</ul>
+      <a class="tm-btn tm-collab" href="mailto:${esc(EMAIL)}?subject=${encodeURIComponent("Vamos produzir juntos")}">Vamos produzir juntos →</a>
+      <p class="tm-collab-note">Projetos, colaborações e coproduções.</p>
     </div>`;
 
   /* ── the grid: everyone gets a frame; it stays empty until their photo is added ── */
