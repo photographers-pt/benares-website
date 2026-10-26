@@ -18,6 +18,10 @@ function createHeader() {
       nav img {
         vertical-align: middle;
       }
+
+      /* "THE TEAM" stands out in the menu (the text itself stays "The team") */
+      nav a[href="/team/"] { text-transform: uppercase; }
+      @media (min-width: 769px) { nav a[href="/team/"] { letter-spacing: 0.06em; } }
     </style>
 
    <header>
