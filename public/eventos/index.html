@@ -296,6 +296,7 @@
       transition: color 0.2s;
     }
     .event-modal-meta-item a:hover { color: var(--text-primary); }
+    .event-modal-address { display: block; margin-top: 0.2rem; font-size: 0.76rem; color: var(--text-muted); }
 
     .event-modal-divider {
       border: none;
@@ -526,6 +527,7 @@
      *    tag:         "Projeção",          ← etiqueta (Projeção / Networking / Workshop / Festival)
      *    location:    "LX Factory, Lisboa",← nome do local
      *    locationUrl: "https://maps.app.goo.gl/...", ← link Google Maps (ou null)
+     *    address:     "Rua X 1, 1000-000 Lisboa",  ← morada completa (opcional, aparece no modal)
      *    description: "Descrição...",      ← texto completo que aparece no modal
      *    image:       "/media/...",        ← foto de capa (ou null)
      *    price:       "Entrada livre",     ← "Entrada livre" / "5€" / "10€ · Eventbrite"
@@ -545,7 +547,8 @@
         name: "Night Lounge #4",
         tag: "Projeção",
         location: "Cossoul",
-        locationUrl: null,
+        locationUrl: "https://maps.app.goo.gl/eC3aaXbhsfe5yB1a8",
+        address: "R. Nova da Piedade 66, 1200-299 Lisboa",
         description: "Uma noite de Night Lounge dedicada às curtas-metragens do público. Vamos ver os filmes juntos.",
         image: null,
         price: null,
@@ -653,10 +656,11 @@
       date.textContent  = ev.date || `${ev.day} ${ev.month}`;
       time.textContent  = ev.time;
 
+      const address = ev.address ? `<span class="event-modal-address">${ev.address}</span>` : '';
       if (ev.locationUrl) {
-        location.innerHTML = `<a href="${ev.locationUrl}" target="_blank" rel="noopener noreferrer">${ev.location}</a>`;
+        location.innerHTML = `<a href="${ev.locationUrl}" target="_blank" rel="noopener noreferrer">${ev.location}</a>${address}`;
       } else {
-        location.textContent = ev.location;
+        location.innerHTML = `${ev.location}${address}`;
       }
 
       desc.textContent = ev.description || '';
