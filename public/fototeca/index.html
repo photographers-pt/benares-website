@@ -273,7 +273,8 @@
      *   date     → data do evento (texto livre)
      *   filme    → true se for registo de um filme (mostra link para cinemateca)
      *
-     * Ordem: cronológica (mais antigo primeiro)
+     * Ordem neste ficheiro: cronológica (mais antigo primeiro), por isso um evento novo
+     * acrescenta-se no FIM da lista. Na página aparecem ao contrário: o mais recente em cima.
      */
     const events = [
       {
@@ -379,7 +380,9 @@
 
     var root = document.getElementById('gallery-root');
 
-    events.forEach(function(ev, evIdx) {
+    /* Mais recente primeiro; o número (01, 02…) continua a ser o do evento por ordem cronológica */
+    events.slice().reverse().forEach(function(ev) {
+      var evIdx = events.indexOf(ev);
       var section = document.createElement('div');
       section.className = 'event-section';
 
