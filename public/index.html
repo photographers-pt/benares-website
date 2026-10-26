@@ -187,7 +187,7 @@
        Row 2 (280px): Activity + Festival + Founder
          Eventos    → col 1–5
          .KO        → col 5–10
-         Charlie    → col 10–13
+         The team   → col 10–13
 
        Row 3 (240px): Engagement + Archive + Shop + Coming
          Join       → col 1–4
@@ -206,7 +206,7 @@
 
     .bc-eventos   { grid-column: 1 / 5;  grid-row: 2; }
     .bc-ko        { grid-column: 5 / 9;  grid-row: 2; }
-    .bc-charlie   { grid-column: 9 / 13; grid-row: 2; }
+    .bc-team      { grid-column: 9 / 13; grid-row: 2; }
 
     .bc-join      { grid-column: 1 / 5;  grid-row: 3; }
     .bc-fototeca  { grid-column: 5 / 9;  grid-row: 3; }
@@ -315,10 +315,10 @@
       /* Row 1: Historia + Cinemateca */
       .bc-historia  { grid-column: 1 / 5; grid-row: 1; }
       .bc-cinemateca{ grid-column: 5 / 7; grid-row: 1; }
-      /* Row 2: Eventos + .KO + Charlie */
+      /* Row 2: Eventos + .KO + The team */
       .bc-eventos   { grid-column: 1 / 3; grid-row: 2; }
       .bc-ko        { grid-column: 3 / 5; grid-row: 2; }
-      .bc-charlie   { grid-column: 5 / 7; grid-row: 2; }
+      .bc-team      { grid-column: 5 / 7; grid-row: 2; }
       /* Row 3: Join + Fototeca + Mercado */
       .bc-join      { grid-column: 1 / 3; grid-row: 3; }
       .bc-fototeca  { grid-column: 3 / 5; grid-row: 3; }
@@ -340,7 +340,7 @@
       .bc-cinemateca{ grid-column: 1 / 2; grid-row: 2; }
       .bc-eventos   { grid-column: 2 / 3; grid-row: 2; }
       .bc-ko        { grid-column: 1 / 3; grid-row: 3; }
-      .bc-charlie   { grid-column: 1 / 2; grid-row: 4; }
+      .bc-team      { grid-column: 1 / 2; grid-row: 4; }
       .bc-join      { grid-column: 2 / 3; grid-row: 4; }
       .bc-fototeca  { grid-column: 1 / 2; grid-row: 5; }
       .bc-mercado   { grid-column: 2 / 3; grid-row: 5; }
@@ -352,7 +352,7 @@
 
     @media (max-width: 420px) {
       .bento { grid-template-columns: 1fr; grid-auto-rows: 220px; }
-      .bc-historia, .bc-cinemateca, .bc-eventos, .bc-ko, .bc-charlie,
+      .bc-historia, .bc-cinemateca, .bc-eventos, .bc-ko, .bc-team,
       .bc-join, .bc-fototeca, .bc-mercado,
       .bc-opencall, .bc-crowd, .bc-feedback { grid-column: 1; grid-row: auto; }
     }
@@ -407,20 +407,24 @@
       </div>
     </div>
 
-    <!-- CHARLIE CHAVES -->
-    <div class="bc bc-charlie" id="bc-charlie-tile" style="cursor:pointer;">
-      <div class="bc-img" style="background-image:url('/media/fototeca/full/nl1-12.jpg')"></div>
+    <!-- THE TEAM -->
+    <a href="/team/" class="bc bc-team">
+      <div class="bc-img" style="background-image:url('/media/fototeca/full/jg-16.jpg')"></div>
       <div class="bc-grad"></div>
       <div class="bc-body">
-        <h2 class="bc-title">Charlie Chaves</h2>
+        <h2 class="bc-title">The team</h2>
         <p class="bc-desc">
-          <span data-lang="pt">Realizador · Fundador do clube.</span>
-          <span data-lang="en">Director · Club founder.</span>
-          <span data-lang="es">Director · Fundador del club.</span>
+          <span data-lang="pt">Os profissionais por trás dos nossos filmes.</span>
+          <span data-lang="en">The filmmakers behind our films.</span>
+          <span data-lang="es">Los profesionales detrás de nuestras películas.</span>
         </p>
-        <span class="bc-link">→</span>
+        <span class="bc-link">
+          <span data-lang="pt">Conhece-nos →</span>
+          <span data-lang="en">Meet us →</span>
+          <span data-lang="es">Conócenos →</span>
+        </span>
       </div>
-    </div>
+    </a>
 
     <!-- EVENTOS -->
     <a href="/eventos/" class="bc bc-eventos">
@@ -767,7 +771,7 @@
 </script>
 
 <!-- ═══════════════════════════════════════════════════════
-     TILE MODALS: Historia · Charlie · Join the Club
+     TILE MODALS: Historia · Join the Club
 ═══════════════════════════════════════════════════════ -->
 
 <!-- MODAL: Historia -->
@@ -839,55 +843,6 @@
           <p data-lang="en">We invite you to be part of Club Benares: come to our events, meet the community and take part in our independent projects and productions. Whether in front of or behind the camera, there is always room for those who share the same passion for cinema. We hope to see you soon!</p>
           <p data-lang="es">Te invitamos a formar parte del Club Benares: ven a nuestros eventos, conoce la comunidad y participa en nuestros proyectos y producciones independientes. Ya sea delante o detrás de la cámara, siempre hay lugar para quien comparte la misma pasión por el cine. ¡Esperamos verte pronto!</p>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: Charlie Chaves -->
-<div id="modal-charlie" class="tile-modal" aria-modal="true" role="dialog" hidden>
-  <div class="tm-backdrop"></div>
-  <div class="tm-panel">
-    <button class="tm-close" aria-label="Fechar">&times;</button>
-    <div class="tm-hero tm-hero--portrait">
-      <div class="tm-hero-img" style="background-image:url('/media/fototeca/full/nl1-12.jpg')"></div>
-      <div class="tm-hero-grad"></div>
-      <div class="tm-hero-title">
-        <span class="tm-eyebrow">Realizador · Fundador</span>
-        <h2 class="tm-hero-heading">Charlie Chaves</h2>
-      </div>
-    </div>
-    <div class="tm-body">
-      <p data-lang="pt">Olá, espero que estejas bem!</p>
-      <p data-lang="en">Hello, hope you're doing well!</p>
-      <p data-lang="es">¡Hola, espero que estés bien!</p>
-
-      <p data-lang="pt">Nasci a 6 de junho de 2004 e cresci na Guatemala, uma realidade muito diferente da Lisboa onde vivo hoje. As pessoas, os lugares e as experiências desses anos continuam presentes na forma como escrevo e conto histórias.</p>
-      <p data-lang="en">I was born on 6 June 2004 and grew up in Guatemala — a very different reality from the Lisbon where I live today. The people, the places and the experiences of those years are still present in the way I write and tell stories.</p>
-      <p data-lang="es">Nací el 6 de junio de 2004 y crecí en Guatemala, una realidad muy diferente a la Lisboa donde vivo hoy. Las personas, los lugares y las experiencias de esos años siguen presentes en la forma en que escribo y cuento historias.</p>
-
-      <p data-lang="pt">Inspirado por muitos filmes e por pessoas como o meu pai, Gustavo, e a minha amiga de infância Sara Sánchez, decidi que um dia faria filmes. Aos 18 anos mudei-me para Lisboa, onde comecei a estudar Produção Audiovisual na ETIC.</p>
-      <p data-lang="en">Inspired by many films and by people like my father Gustavo and my childhood friend Sara Sánchez, I decided that one day I would make films. At 18 I moved to Lisbon, where I started studying Audiovisual Production at ETIC.</p>
-      <p data-lang="es">Inspirado por muchas películas y por personas como mi padre Gustavo y mi amiga de infancia Sara Sánchez, decidí que algún día haría películas. A los 18 me mudé a Lisboa, donde comencé a estudiar Producción Audiovisual en la ETIC.</p>
-
-      <p data-lang="pt">Em 2023, juntei um grupo de amigos com a mesma vontade de filmar e fundei o Club Benares, um coletivo de cinema independente que se tornou, com o tempo, uma comunidade aberta a todos os que amam o cinema.</p>
-      <p data-lang="en">In 2023, I brought together a group of friends with the same desire to film and founded Club Benares — an independent cinema collective that became, over time, a community open to all who love cinema.</p>
-      <p data-lang="es">En 2023, reuní a un grupo de amigos con las mismas ganas de filmar y fundé el Club Benares, un colectivo de cine independiente que se convirtió, con el tiempo, en una comunidad abierta a todos los que aman el cine.</p>
-
-      <p data-lang="pt">O que vem a seguir?</p>
-      <p data-lang="en">What comes next?</p>
-      <p data-lang="es">¿Qué viene después?</p>
-
-      <p data-lang="pt" style="color:var(--text-muted);font-style:italic;">Um abraço,<br>Charlie</p>
-      <p data-lang="en" style="color:var(--text-muted);font-style:italic;">Best,<br>Charlie</p>
-      <p data-lang="es" style="color:var(--text-muted);font-style:italic;">Un abrazo,<br>Charlie</p>
-
-      <div class="tm-cta-row">
-        <a href="/charlie/home/" class="tm-cta-btn">
-          <span data-lang="pt">Portfolio →</span>
-          <span data-lang="en">Portfolio →</span>
-          <span data-lang="es">Portfolio →</span>
-        </a>
       </div>
     </div>
   </div>
@@ -1127,7 +1082,6 @@
       /* Tile triggers */
       var triggerMap = {
         'bc-historia-tile': 'modal-historia',
-        'bc-charlie-tile':  'modal-charlie',
         'bc-join-tile':     'modal-join'
       };
       Object.keys(triggerMap).forEach(function(tid) {

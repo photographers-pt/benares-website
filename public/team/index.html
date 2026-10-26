@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The team | Club Benares</title>
+  <meta name="description" content="Conhece a equipa do Club Benares: os profissionais por trás da produtora de cinema, com os seus portfolios." />
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    /* ── intro ── */
+    .team-intro {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 4.5rem 2rem 1rem;
+    }
+    .team-lead {
+      font-family: var(--font-family);
+      font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+      font-weight: 300;
+      line-height: 1.65;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    /* ── members: photo on one side, bio on the other, alternating ── */
+    .team-list {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 3.5rem 2rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 5rem;
+    }
+    .member {
+      display: grid;
+      grid-template-columns: minmax(220px, 360px) 1fr;
+      gap: clamp(1.75rem, 5vw, 4.5rem);
+      align-items: center;
+    }
+    .member:nth-child(even) { grid-template-columns: 1fr minmax(220px, 360px); }
+    .member:nth-child(even) .member-photo { order: 2; }
+
+    .member-photo {
+      display: block;
+      width: 100%;
+      height: auto;            /* so aspect-ratio wins over the height="" attribute */
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      object-position: center 20%;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: rgba(255, 248, 238, 0.04);
+    }
+
+    .member-role {
+      display: block;
+      font-family: var(--font-family);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .member-name {
+      font-family: var(--font-family);
+      font-size: clamp(2rem, 4.5vw, 3.2rem);
+      font-weight: 300;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      line-height: 1.1;
+      color: var(--text-primary);
+      margin: 0.6rem 0 1.4rem;
+    }
+    .member-bio {
+      font-family: var(--font-family);
+      font-size: 0.98rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      max-width: 54ch;
+      margin: 0;
+    }
+    .member-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1.9rem;
+    }
+    .member-link {
+      display: inline-flex;
+      align-items: center;
+      font-family: var(--font-family);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--text-primary);
+      border: 1px solid var(--border-strong);
+      border-radius: 40px;
+      padding: 0.65rem 1.2rem;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    .member-link:hover {
+      background: rgba(255, 248, 238, 0.08);
+      border-color: rgba(240, 232, 216, 0.4);
+    }
+
+    /* ── contact call to action ── */
+    .team-cta {
+      max-width: 860px;
+      margin: 3rem auto 0;
+      padding: 5rem 2rem 8rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    .team-cta-title {
+      font-family: var(--font-family);
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 300;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      line-height: 1.15;
+      color: var(--text-primary);
+      margin: 0 0 1rem;
+    }
+    .team-cta-text {
+      font-family: var(--font-family);
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      margin: 0 auto 2.25rem;
+      max-width: 46ch;
+    }
+    .team-cta-btn {
+      display: inline-block;
+      background: var(--text-primary);
+      color: #000;
+      border-radius: 4px;
+      padding: 0.9rem 2.1rem;
+      font-family: var(--font-family);
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .team-cta-btn:hover { opacity: 0.82; }
+
+    @media (max-width: 720px) {
+      .team-intro { padding: 3rem 1.5rem 0.5rem; }
+      .team-list { padding: 2.5rem 1.5rem 1rem; gap: 3.5rem; }
+      .member,
+      .member:nth-child(even) { grid-template-columns: 1fr; gap: 1.5rem; }
+      .member:nth-child(even) .member-photo { order: 0; }
+      .member-photo { max-width: 420px; }
+      .team-cta { padding: 4rem 1.5rem 6rem; }
+    }
+  </style>
+  <script src="/i18n-dict.js"></script>
+  <script src="/i18n.js"></script>
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+</head>
+<body>
+
+  <div id="grain"></div>
+  <div id="header-container"></div>
+
+  <main>
+    <div class="page-banner">
+      <img src="/media/fototeca/full/inx-19.jpg" alt="" class="page-banner-img" style="object-position: center 30%;">
+      <div class="page-banner-title">
+        <span class="page-banner-eyebrow">Club Benares</span>
+        <h1 class="page-banner-heading">The team</h1>
+      </div>
+    </div>
+
+    <section class="team-intro">
+      <p class="team-lead">O Club Benares nasceu em 2023 como coletivo de cinema independente e dá agora os primeiros passos como produtora. Esta é a equipa: profissionais de áreas diferentes que trabalham juntos, em Lisboa, para pôr histórias em imagem.</p>
+    </section>
+
+    <section class="team-list" aria-label="The team">
+
+      <!-- ─────────────────────────────────────────────────────────────
+           TO ADD A PERSON: copy one <article class="member"> block below and fill it in.
+           Photo on one side and bio on the other alternate automatically.
+             • photo      → put the file in /media/team/ (portrait works best, ~4:5) and use its path in src.
+                            If it is a wide photo and the face gets cut, shift the crop with style="object-position: 20% center"
+             • role       → short line, e.g. "Diretora de Fotografia"
+             • bio        → 2–4 sentences
+             • links      → portfolio first; add Instagram, Vimeo, site… as extra .member-link anchors
+           Text is Portuguese; add each new sentence to /i18n-dict.js ([pt, en, es]) so it
+           also shows in English and Spanish.
+           ───────────────────────────────────────────────────────────── -->
+
+      <article class="member">
+        <img class="member-photo" src="/Imagenes/Charlie%20Portfolio/Charlie%20Portrait%20%231.jpg" alt="Charlie Chaves" width="720" height="900" loading="lazy" style="object-position: 16% center;">
+        <div class="member-text">
+          <span class="member-role">Escritor e Realizador · Produtor Audiovisual · Fundador</span>
+          <h2 class="member-name">Charlie Chaves</h2>
+          <p class="member-bio">Cresceu na Guatemala e mudou-se para Lisboa aos 18 anos, onde começou a estudar Produção Audiovisual na ETIC. Em 2023 reuniu um grupo de amigos com a mesma vontade de filmar e fundou o Club Benares, um coletivo de cinema independente que se tornou, com o tempo, uma comunidade aberta a todos os que amam o cinema. Escrever e realizar é a sua maior paixão.</p>
+          <div class="member-links">
+            <a class="member-link" href="/charlie/home/">Portfolio →</a>
+            <a class="member-link" href="https://www.instagram.com/CharlieChaves14" target="_blank" rel="noopener noreferrer">Instagram ↗</a>
+          </div>
+        </div>
+      </article>
+
+    </section>
+
+    <section class="team-cta">
+      <h2 class="team-cta-title">Vamos fazer um filme juntos?</h2>
+      <p class="team-cta-text">Tens um projeto ou queres juntar-te à equipa? Fala connosco.</p>
+      <a class="team-cta-btn" href="/contactos/">Entrar em contacto →</a>
+    </section>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script src="/shared.js"></script>
+</body>
+</html>

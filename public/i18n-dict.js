@@ -253,6 +253,22 @@
       ['Moda', 'Fashion', 'Moda'],
       ['Laboratorio', 'Laboratory', 'Laboratorio'],
 
+      /* ═══════════ The team ═══════════ */
+      ['Conhece a equipa do Club Benares: os profissionais por trás da produtora de cinema, com os seus portfolios.',
+        'Meet the Club Benares team: the professionals behind the film production company, with their portfolios.',
+        'Conoce al equipo del Club Benares: los profesionales detrás de la productora de cine, con sus portfolios.'],
+      ['O Club Benares nasceu em 2023 como coletivo de cinema independente e dá agora os primeiros passos como produtora. Esta é a equipa: profissionais de áreas diferentes que trabalham juntos, em Lisboa, para pôr histórias em imagem.',
+        'Club Benares was born in 2023 as an independent film collective and is now taking its first steps as a production company. This is the team: professionals from different fields working together, in Lisbon, to bring stories to the screen.',
+        'El Club Benares nació en 2023 como colectivo de cine independiente y ahora da sus primeros pasos como productora. Este es el equipo: profesionales de distintas áreas que trabajan juntos, en Lisboa, para llevar historias a la pantalla.'],
+      ['Cresceu na Guatemala e mudou-se para Lisboa aos 18 anos, onde começou a estudar Produção Audiovisual na ETIC. Em 2023 reuniu um grupo de amigos com a mesma vontade de filmar e fundou o Club Benares, um coletivo de cinema independente que se tornou, com o tempo, uma comunidade aberta a todos os que amam o cinema. Escrever e realizar é a sua maior paixão.',
+        'He grew up in Guatemala and moved to Lisbon at 18, where he began studying Audiovisual Production at ETIC. In 2023 he brought together a group of friends with the same desire to film and founded Club Benares, an independent film collective that has, over time, become a community open to everyone who loves cinema. Writing and directing is his greatest passion.',
+        'Creció en Guatemala y se mudó a Lisboa a los 18 años, donde empezó a estudiar Producción Audiovisual en la ETIC. En 2023 reunió a un grupo de amigos con las mismas ganas de filmar y fundó el Club Benares, un colectivo de cine independiente que con el tiempo se convirtió en una comunidad abierta a todos los que aman el cine. Escribir y dirigir es su mayor pasión.'],
+      ['Vamos fazer um filme juntos?', 'Shall we make a film together?', '¿Hacemos una película juntos?'],
+      ['Tens um projeto ou queres juntar-te à equipa? Fala connosco.',
+        'Got a project, or want to join the team? Get in touch.',
+        '¿Tienes un proyecto o quieres unirte al equipo? Escríbenos.'],
+      ['Entrar em contacto →', 'Get in touch →', 'Ponte en contacto →'],
+
       /* ═══════════ Comunidad (.KO) — textos en inglés a propósito en PT ═══════════ */
       ['The Benares Club presents', 'The Benares Club presents', 'The Benares Club presenta'],
       ['Coming Soon', 'Coming Soon', 'Próximamente'],
@@ -414,7 +430,7 @@
       // marca y secciones
       'Charlie Chaves', 'Charlie', 'Chaves', 'The Benares Club', 'Club Benares', '© 2026 Club Benares.', '.KO', 'PT', 'EN', 'ES',
       'Instagram', 'Email', 'Newsletter', 'MB Way', 'PayPal', 'Subtotal', 'Total', 'Stripe', 'Drama', 'Portugal', 'Suspense',
-      'Bio', 'Blog', 'Cine Club', 'Daily Life', 'Editorial', 'Workshop', 'Networking', 'Festival', 'Film Festivals',
+      'Bio', 'Blog', 'Cine Club', 'Daily Life', 'Editorial', 'Workshop', 'The team', 'Portfolio', 'Networking', 'Festival', 'Film Festivals',
       'Join the Club', 'Open Call', 'Crowdfunding', 'Feedback',
       '.KO Lisboa', 'International Short-film Championship', 'Final Championship',
       'Lisbon International Short-film Championship', 'Cooking in progress',
