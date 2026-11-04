@@ -26,8 +26,8 @@
   const head = `
     <div class="tm-side">
       ${person
-        ? `<a class="tm-title" href="/team/">The band</a>`
-        : `<h1 class="tm-title">The band</h1>
+        ? `<a class="tm-title" href="/team/">The Band</a>`
+        : `<h1 class="tm-title">The Band</h1>
            <p class="tm-lead">Nasce a produtora Club Benares. Esta é a equipa: profissionais de áreas diferentes que trabalham juntos, em Portugal, para pôr histórias em imagem.</p>`}
     </div>`;
   const names = `
